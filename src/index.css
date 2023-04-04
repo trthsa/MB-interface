@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+    --primary-color: rgb(59 130 246);
+}
+
+/* create a custome class from tailwindcss class bg-blue-500 p-3 rounded-lg */
+.blue_bg {
+    @apply bg-blue-500 p-3 rounded-lg;
+}
+
+.lite_g_border {
+    @apply border-[3px] border-blue-500/20 rounded-lg;
+}
+
+.lite_g_border:hover {
+    @apply border-blue-500/40;
+}
