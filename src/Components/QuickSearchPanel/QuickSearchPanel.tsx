@@ -1,10 +1,58 @@
-import { Button, FormControlLabel, TextField } from "@mui/material";
+import { Button, FormControlLabel, Paper, TextField } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import FormGroup from "@mui/material/FormGroup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import AirPortItem, { AirPort } from "./components/AirPortItem";
+
+enum InputCursor {
+  DepartFrom,
+  DepartTo,
+  DepartDate,
+  ReturnDate,
+}
+
+const AirportList = ({
+  departLocationData,
+}: {
+  departLocationData: AirPort[];
+}) => {
+  return (
+    <Paper elevation={3} className="py-2">
+      {departLocationData.map((item) => (
+        <AirPortItem
+          key={item.id}
+          airport={item}
+          // onClick={() => setDepartFrom(item.name)}
+        />
+      ))}
+    </Paper>
+  );
+};
 
 function QuickSearchPanel() {
   const [slKH, setSlKH] = useState(1);
+  //TODO data for searching flight
+  const [departFrom, setDepartFrom] = useState("");
+  const [departTo, setDepartTo] = useState("");
+  const [departDate, setDepartDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
+  //? State for inputs
+  const [inputCursor, setInputCursor] = useState<InputCursor | null>(null);
+  //TODO Deapart Data
+  const [departLocationData, setDepartLocationData] = useState<AirPort[]>([]);
+
+  //? Fetch data from API to get the list of airport
+  const fetchDepartData = async () => {
+    const res = await fetch("https://localhost:44379/api/AirPort/GetAll");
+    const data = await res.json();
+    setDepartLocationData(data);
+  };
+
+  useEffect(() => {
+    fetchDepartData();
+  }, []);
+
   return (
     <div className="lite_g_border p-5 w-fit min-w-[400px] bg-white">
       <div className="text-2xl underline decoration-3 underline-offset-4 decoration-blue-400">
@@ -28,41 +76,53 @@ function QuickSearchPanel() {
       <div className="flex flex-col gap-5 my-3">
         <div className="flex flex-col gap-2">
           <div className="flex gap-0 pt-5 p-b-3 px-2 py-2  border-[2px] border-slate-300/80 rounded-t-2xl">
-            <TextField
-              id="outlined-password-input"
-              label="Điểm khởi hành"
-              type="text"
-              autoComplete="current-password"
-              //make the boder of this more round
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "&:hover fieldset": {
-                    borderColor: "var(--primary-color)",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "var(--primary-color)",
-                  },
-                  "& fieldset": {
-                    // paddingLeft: (theme) => theme.spacing(2.5),
-                    borderRadius: "15px 0px 0px 0px",
-                    borderColor: "transparent",
-                  },
+            <div className="relative">
+              <TextField
+                onFocus={() => {
+                  setInputCursor(InputCursor.DepartFrom);
+                }}
+                onBlur={() => setInputCursor(null)}
+                label="Điểm khởi hành"
+                type="text"
+                autoComplete="current-password"
+                //make the boder of this more round
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "&:hover fieldset": {
+                      borderColor: "var(--primary-color)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "var(--primary-color)",
+                    },
+                    "& fieldset": {
+                      // paddingLeft: (theme) => theme.spacing(2.5),
+                      borderRadius: "15px 0px 0px 0px",
+                      borderColor: "transparent",
+                    },
 
-                  // "& input":{
-                  //   padding: "none"
-                  // }
-                },
-                "& label": {
-                  //make it black and bold
-                  color: "black",
-                  fontWeight: "bold",
-                  opacity: 0.8,
-                },
-                "& label.Mui-focused": {
-                  color: "var(--primary-color)",
-                },
-              }}
-            />{" "}
+                    // "& input":{
+                    //   padding: "none"
+                    // }
+                  },
+                  "& label": {
+                    //make it black and bold
+                    color: "black",
+                    fontWeight: "bold",
+                    opacity: 0.8,
+                  },
+                  "& label.Mui-focused": {
+                    color: "var(--primary-color)",
+                  },
+                }}
+              />
+              <div
+                className={`${
+                  inputCursor == InputCursor.DepartFrom || "hidden"
+                } shadow-lg absolute z-10 w-full max-h-[300px] overflow-y-scroll scrollbar-thin scrollbar-track-slate-500/20 scrollbar-thumb-black/10`}
+              >
+                <AirportList departLocationData={departLocationData} />
+              </div>
+            </div>
             <TextField
               id="outlined-password-input"
               label="Ngày đi"
@@ -100,41 +160,53 @@ function QuickSearchPanel() {
             />
           </div>{" "}
           <div className="flex gap-0 p-b-3 pt-5 px-2 py-2 border-[2px] border-slate-300/80 rounded-b-2xl">
-            <TextField
-              id="outlined-password-input"
-              label="Điểm đến"
-              type="text"
-              autoComplete="current-password"
-              //make the boder of this more round
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "&:hover fieldset": {
-                    borderColor: "var(--primary-color)",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "var(--primary-color)",
-                  },
-                  "& fieldset": {
-                    // paddingLeft: (theme) => theme.spacing(2.5),
-                    borderRadius: "0px 0px 0px 15px",
-                    borderColor: "transparent",
-                  },
+            <div className="relative">
+              <TextField
+                onFocus={() => {
+                  setInputCursor(InputCursor.DepartTo);
+                }}
+                onBlur={() => setInputCursor(null)}
+                label="Điểm đến"
+                type="text"
+                autoComplete="current-password"
+                //make the boder of this more round
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "&:hover fieldset": {
+                      borderColor: "var(--primary-color)",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "var(--primary-color)",
+                    },
+                    "& fieldset": {
+                      // paddingLeft: (theme) => theme.spacing(2.5),
+                      borderRadius: "0px 0px 0px 15px",
+                      borderColor: "transparent",
+                    },
 
-                  // "& input":{
-                  //   padding: "none"
-                  // }
-                },
-                "& label": {
-                  //make it black and bold
-                  color: "black",
-                  fontWeight: "bold",
-                  opacity: 0.8,
-                },
-                "& label.Mui-focused": {
-                  color: "var(--primary-color)",
-                },
-              }}
-            />{" "}
+                    // "& input":{
+                    //   padding: "none"
+                    // }
+                  },
+                  "& label": {
+                    //make it black and bold
+                    color: "black",
+                    fontWeight: "bold",
+                    opacity: 0.8,
+                  },
+                  "& label.Mui-focused": {
+                    color: "var(--primary-color)",
+                  },
+                }}
+              />{" "}
+              <div
+                className={`${
+                  inputCursor == InputCursor.DepartTo || "hidden"
+                } shadow-lg absolute z-10 w-full max-h-[300px] overflow-y-scroll scrollbar-thin scrollbar-track-slate-500/20 scrollbar-thumb-black/10`}
+              >
+                <AirportList departLocationData={departLocationData} />
+              </div>
+            </div>
             <TextField
               id="outlined-password-input"
               label="Ngày về"
@@ -245,7 +317,9 @@ function QuickSearchPanel() {
             mt: 2,
           }}
         >
-          Tìm chuyến bay
+         <Link to={"book"}>
+          Tìm kiếm chuyến bay
+         </Link>
         </Button>
       </div>
     </div>
