@@ -1,4 +1,4 @@
-import BookingPanel from "../components/QuickSearchPanel/Booking";
+import BookingPanel from "../Components/QuickSearchPanel/Booking";
 
 function BookingView() {
   return (

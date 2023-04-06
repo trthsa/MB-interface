@@ -5,9 +5,10 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import PageWrapper from "./components/Layout/PageWrapper";
 import "./index.css";
 import BookingView from "./views/BookingView";
+import LoginViews from "./views/LoginViews";
+import PageWrapper from "./Components/Layout/PageWrapper";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
   {
     path: "/book",
     element: <BookingView />,
+  },
+  {
+    path: "/acc_logging",
+    element: <LoginViews />,
   },
 ]);
 

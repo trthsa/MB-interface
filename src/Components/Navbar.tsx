@@ -11,7 +11,16 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-const pages = ["Vé máy bay", "Lịch sử đặt vé", "Tra cứu chuyến bay"];
+import { Link } from "react-router-dom";
+const pages = [
+  "Vé máy bay",
+  "Lịch sử đặt vé",
+  "Tra cứu chuyến bay",
+  "Đăng ký/ Đăng nhập",
+];
+enum PageLinks {
+  Acc_Logging = "acc_logging",
+}
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function NavBar() {
@@ -30,6 +39,9 @@ function NavBar() {
   };
 
   const handleCloseNavMenu = () => {
+    console.log(123);
+    //open new url
+    window.open(PageLinks.Acc_Logging);
     setAnchorElNav(null);
   };
 
