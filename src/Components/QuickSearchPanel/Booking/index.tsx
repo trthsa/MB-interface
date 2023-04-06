@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BookingSteps from "./components/BookingSteps";
 import ConfrimPanel from "./components/ConfrimPanel";
-import FlightSelectionPanel from "./components/FlightSelectionPanel";
+import FlightSelectionPanel, {
+  FlightData,
+  createData,
+} from "./components/FlightSelectionPanel";
 import PassengerInfoInput from "./components/PassengerInfoInput";
 import ReceiptPanel from "./components/ReceiptPanel";
 import SelectPaymentMethod, {
@@ -13,6 +16,36 @@ export interface StepProps {
   next: () => void;
 }
 function BookingPanel() {
+  //TODO fetch flights data
+  //TODO fetch flight data from API
+  const [flightData, setFlightData] = useState<FlightData[]>([]);
+  const fetchFlightData = async () => {
+    //TODO
+    const data = await fetch("https://localhost:44379/api/Flight/GetAll");
+    // console.log(await data.json());
+    const flightDataRes: any = await data.json();
+    setFlightData(
+      flightDataRes.map((flight: any) => {
+        return createData(
+          flight.flights.id,
+          flight.airLine.name,
+          flight.begin.name,
+          flight.end.name,
+          "3 tiếng 5 phút",
+          Number(flight.price.price)
+            .toLocaleString("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            })
+            .toString()
+        );
+      }) as FlightData[]
+    );
+  };
+  useEffect(() => {
+    fetchFlightData();
+  }, []);
+
   //TODO data for steps
   const [activeStep, setActiveStep] = useState(0);
   const handleNext = () => {
@@ -47,6 +80,8 @@ function BookingPanel() {
       case 3:
         return (
           <ConfrimPanel
+            flightsData={flightData}
+            flightID={flightID || ""}
             userCCID={passengerInfo?.ccid}
             email={passengerInfo?.email}
             phone={passengerInfo?.phone}
@@ -56,7 +91,15 @@ function BookingPanel() {
           />
         );
       case 4:
-        return <ReceiptPanel setter={() => {}} next={handleNext} />;
+        return (
+          <ReceiptPanel
+            isConfirmed={isConfirmed}
+            flightsData={flightData}
+            flightID={flightID || ""}
+            setter={() => {}}
+            next={handleNext}
+          />
+        );
       default:
         return <div>Not found</div>;
     }

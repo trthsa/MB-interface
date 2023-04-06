@@ -38,6 +38,7 @@ function SelectPaymentMethod({ next, setter }: StepProps & {}) {
             {paymentMethods.map((method) => {
               return (
                 <PaymentMethodButton
+                  key={method}
                   isActive={paymentMethod === method}
                   paymentMethod={method}
                   setter={setPaymentMethod}

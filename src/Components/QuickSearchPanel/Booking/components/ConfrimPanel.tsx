@@ -1,6 +1,7 @@
 import { Button, Paper } from "@mui/material";
+import { useEffect, useState } from "react";
 import { StepProps } from "..";
-import FlightSelectionPanel from "./FlightSelectionPanel";
+import FlightSelectionPanel, { FlightData } from "./FlightSelectionPanel";
 import { PaymentMethod } from "./SelectPaymentMethod";
 
 function ConfrimPanel({
@@ -10,18 +11,68 @@ function ConfrimPanel({
   email,
   phone,
   paymentMethod,
+  flightID,
+  flightsData,
 }: StepProps & {
+  flightID: string;
+  flightsData: FlightData[];
   userCCID?: string;
   email?: string;
   phone?: string;
   paymentMethod?: PaymentMethod;
 }) {
+  const [chosenFlight, setChosenFlight] = useState<FlightData[]>([]);
+  const sendingData = {
+    ticket: {
+      id: 0,
+      dateTime: "2023-04-06T00:58:40.649Z",
+      ticketclassId: 0,
+      paymentMethods: paymentMethod,
+      flightID: flightID,
+      voucherID: 0,
+      codeSeats: "string",
+      tempId: 0,
+    },
+    customer: {
+      id: 0,
+      phone: phone,
+      email: email,
+      nationCCIDID: Number(userCCID),
+    },
+  };
+  const boardCastTicketToServer = () => {
+    fetch("https://localhost:44379/api/Ticket/Create", {
+      headers: {
+        accept: "*/*",
+        "content-type": "application/json",
+      },
+
+      body: JSON.stringify(sendingData),
+      method: "POST",
+      mode: "cors",
+      credentials: "omit",
+    }).then((res) => {
+      setter(true);
+      console.log(res);
+    });
+  };
+  useEffect(() => {
+    // chosenFlight.push(flightsData.filter((flight) => flight.id == flightID));
+    console.log(
+      setChosenFlight(flightsData.filter((flight) => flight.id == flightID))
+    );
+  }, []);
   return (
     <div>
       <h1 className="text-2xl my-2 ">Xác nhận đặt vé</h1>
       <Paper elevation={3} className="p-5 min-w-[650px] flex flex-col gap-10">
         <div>
-          <FlightSelectionPanel isConfirmStep next={next} setter={setter} />
+          <FlightSelectionPanel
+            FlightDataInput={[...chosenFlight]}
+            isConfirmStep
+            next={next}
+            setter={setter}
+          />
         </div>
         <div className="bg-gray-100 rounded-lg p-4">
           <h1 className="text-2xl font-bold mb-4">Thông tin hành khách</h1>
@@ -49,7 +100,7 @@ function ConfrimPanel({
 
         <Button
           onClick={() => {
-            setter(true);
+            boardCastTicketToServer();
             next();
           }}
           variant="contained"

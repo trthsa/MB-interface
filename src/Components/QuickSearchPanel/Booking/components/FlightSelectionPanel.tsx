@@ -10,7 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import { useEffect, useState } from "react";
 import { StepProps } from "..";
 
-function createData(
+export function createData(
   id: string,
   hang: string,
   giocatcanh: string,
@@ -42,7 +42,8 @@ export default function FlightSelectionPanel({
   setter,
   next,
   isConfirmStep,
-}: StepProps & { isConfirmStep?: boolean }) {
+  FlightDataInput,
+}: StepProps & { isConfirmStep?: boolean; FlightDataInput?: FlightData[] }) {
   //TODO fetch flight data from API
   const [flightData, setFlightData] = useState<FlightData[]>([]);
   const fetchFlightData = async () => {
@@ -86,7 +87,7 @@ export default function FlightSelectionPanel({
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {(FlightDataInput || flightData).map((row) => (
             <TableRow
               className="hover:bg-mainColor/10"
               key={row.id}
