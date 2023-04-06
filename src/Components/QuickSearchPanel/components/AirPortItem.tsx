@@ -6,9 +6,22 @@ export interface AirPort {
   gates: string;
 }
 
-function AirPortItem({ airport }: { airport: AirPort }) {
+function AirPortItem({
+  airport,
+  setter,
+}: {
+  airport: AirPort;
+  setter: (value: any) => void;
+}) {
   return (
-    <div className="hover:bg-gray-500/10 cursor-pointer scroll  p-3 flex items-center justify-between">
+    <div
+      onClick={() => {
+        console.log(312);
+
+        setter(airport.location);
+      }}
+      className="hover:bg-gray-500/10 cursor-pointer scroll  p-3 flex items-center justify-between"
+    >
       <div className="flex flex-col">
         <span className="text-xl text-black">{airport.location}</span>
         <span>{airport.name}</span>

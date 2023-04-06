@@ -23,6 +23,9 @@ function BookingPanel() {
     //TODO
     const data = await fetch("https://localhost:44379/api/Flight/GetAll");
     // console.log(await data.json());
+    // if (flightData.length <= 0) {
+    //   return;
+    // }
     const flightDataRes: any = await data.json();
     setFlightData(
       flightDataRes.map((flight: any) => {

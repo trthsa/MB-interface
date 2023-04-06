@@ -18,9 +18,7 @@ function ReceiptPanel({
 
   useEffect(() => {
     // chosenFlight.push(flightsData.filter((flight) => flight.id == flightID));
-    console.log(
-      setChosenFlight(flightsData.filter((flight) => flight.id == flightID))
-    );
+    setChosenFlight(flightsData.filter((flight) => flight.id == flightID));
   }, []);
 
   if (!isConfirmed) {

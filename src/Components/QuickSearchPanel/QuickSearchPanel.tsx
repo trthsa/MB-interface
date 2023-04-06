@@ -4,6 +4,7 @@ import FormGroup from "@mui/material/FormGroup";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AirPortItem, { AirPort } from "./components/AirPortItem";
+import { DatePicker } from "@mui/x-date-pickers";
 
 enum InputCursor {
   DepartFrom,
@@ -12,23 +13,24 @@ enum InputCursor {
   ReturnDate,
 }
 
-const AirportList = ({
-  departLocationData,
-}: {
-  departLocationData: AirPort[];
-}) => {
-  return (
-    <Paper elevation={3} className="py-2">
-      {departLocationData.map((item) => (
-        <AirPortItem
-          key={item.id}
-          airport={item}
-          // onClick={() => setDepartFrom(item.name)}
-        />
-      ))}
-    </Paper>
-  );
-};
+// const AirportList = ({
+//   departLocationData,
+// }: {
+//   departLocationData: AirPort[];
+// }) => {
+//   return (
+//     <Paper elevation={3} className="py-2">
+//       {departLocationData.map((item) => (
+//         <AirPortItem
+
+//           key={item.id}
+//           airport={item}
+//           // onClick={() => setDepartFrom(item.name)}
+//         />
+//       ))}
+//     </Paper>
+//   );
+// };
 
 function QuickSearchPanel() {
   const [slKH, setSlKH] = useState(1);
@@ -81,8 +83,12 @@ function QuickSearchPanel() {
                 onFocus={() => {
                   setInputCursor(InputCursor.DepartFrom);
                 }}
-                onBlur={() => setInputCursor(null)}
-                label="Điểm khởi hành"
+                onBlur={() => {
+                  setTimeout(() => {
+                    setInputCursor(null);
+                  }, 300);
+                }}
+                label={departFrom || "Điểm khởi hành"}
                 type="text"
                 autoComplete="current-password"
                 //make the boder of this more round
@@ -120,10 +126,20 @@ function QuickSearchPanel() {
                   inputCursor == InputCursor.DepartFrom || "hidden"
                 } shadow-lg absolute z-10 w-full max-h-[300px] overflow-y-scroll scrollbar-thin scrollbar-track-slate-500/20 scrollbar-thumb-black/10`}
               >
-                <AirportList departLocationData={departLocationData} />
+                {/* <AirportList departLocationData={departLocationData} /> */}
+                <Paper elevation={3} className="py-2">
+                  {departLocationData.map((item) => (
+                    <AirPortItem
+                      setter={setDepartFrom}
+                      key={item.id}
+                      airport={item}
+                      // onClick={() => setDepartFrom(item.name)}
+                    />
+                  ))}
+                </Paper>
               </div>
             </div>
-            <TextField
+            {/* <TextField
               id="outlined-password-input"
               label="Ngày đi"
               type="text"
@@ -157,7 +173,8 @@ function QuickSearchPanel() {
                   color: "var(--primary-color)",
                 },
               }}
-            />
+            /> */}
+             <DatePicker />
           </div>{" "}
           <div className="flex gap-0 p-b-3 pt-5 px-2 py-2 border-[2px] border-slate-300/80 rounded-b-2xl">
             <div className="relative">
@@ -165,8 +182,12 @@ function QuickSearchPanel() {
                 onFocus={() => {
                   setInputCursor(InputCursor.DepartTo);
                 }}
-                onBlur={() => setInputCursor(null)}
-                label="Điểm đến"
+                onBlur={() =>
+                  setTimeout(() => {
+                    setInputCursor(null);
+                  }, 300)
+                }
+                label={departTo || "Điểm đến"}
                 type="text"
                 autoComplete="current-password"
                 //make the boder of this more round
@@ -204,10 +225,21 @@ function QuickSearchPanel() {
                   inputCursor == InputCursor.DepartTo || "hidden"
                 } shadow-lg absolute z-10 w-full max-h-[300px] overflow-y-scroll scrollbar-thin scrollbar-track-slate-500/20 scrollbar-thumb-black/10`}
               >
-                <AirportList departLocationData={departLocationData} />
+                {/* <AirportList departLocationData={departLocationData} /> */}
+                <Paper elevation={3} className="py-2">
+                  {departLocationData.map((item) => (
+                    <AirPortItem
+                      setter={setDepartTo}
+                      key={item.id}
+                      airport={item}
+                      // onClick={() => setDepartFrom(item.name)}
+                    />
+                  ))}
+                </Paper>
               </div>
             </div>
-            <TextField
+            <DatePicker />
+            {/* <TextField
               id="outlined-password-input"
               label="Ngày về"
               type="text"
@@ -241,7 +273,7 @@ function QuickSearchPanel() {
                   color: "var(--primary-color)",
                 },
               }}
-            />
+            /> */}
           </div>
         </div>
         <div className="flex flex-col gap-2 ">
@@ -317,9 +349,7 @@ function QuickSearchPanel() {
             mt: 2,
           }}
         >
-         <Link to={"book"}>
-          Tìm kiếm chuyến bay
-         </Link>
+          <Link to={"book"}>Tìm kiếm chuyến bay</Link>
         </Button>
       </div>
     </div>
