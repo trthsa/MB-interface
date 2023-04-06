@@ -7,7 +7,7 @@ function HomeView() {
       <div className="relative flex justify-end px-32 my-20 h-full">
         <img
           className="absolute -top-20  left-0 w-full h-full object-cover"
-          src="https://vj-prod-website-cms.s3.ap-southeast-1.amazonaws.com/web1920x960-topbannervnmin-1675829371241.jpg"
+          src="Images/pannellogo.png"
           alt=""
         />
         <div className="z-10">

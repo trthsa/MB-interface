@@ -27,6 +27,18 @@ export function createData(
     Gia,
   };
 }
+function formatTimestamp(timestamp: any) {
+  const date = new Date(timestamp);
+
+  const year = date.getFullYear().toString().slice(2);
+  const month = ("0" + (date.getMonth() + 1)).slice(-2);
+  const day = ("0" + date.getDate()).slice(-2);
+  const hours = ("0" + date.getHours()).slice(-2);
+  const minutes = ("0" + date.getMinutes()).slice(-2);
+
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
+}
+
 export type FlightData = ReturnType<typeof createData>;
 const rows = [
   createData(
@@ -56,8 +68,10 @@ export default function FlightSelectionPanel({
         return createData(
           flight.flights.id,
           flight.airLine.name,
-          flight.begin.name,
-          flight.end.name,
+          flight.begin.name +
+            " " +
+            formatTimestamp(flight.flights.departureTime),
+          flight.end.name + " " + formatTimestamp(flight.flights.arrivalTime),
           "3 tiếng 5 phút",
           Number(flight.price.price)
             .toLocaleString("vi-VN", {
