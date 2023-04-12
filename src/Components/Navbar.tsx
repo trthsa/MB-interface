@@ -1,4 +1,3 @@
-import AdbIcon from "@mui/icons-material/Adb";
 import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket";
 import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
@@ -11,7 +10,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import { Link } from "react-router-dom";
 const pages = [
   "Vé máy bay",
   "Lịch sử đặt vé",
@@ -21,6 +19,25 @@ const pages = [
 enum PageLinks {
   Acc_Logging = "acc_logging",
 }
+const pages_full = [
+  {
+    name: "Vé máy bay",
+    link: "/",
+  },
+  {
+    name: "Lịch sử đặt vé",
+    link: "/",
+  },
+  {
+    name: "Tra cứu chuyến bay",
+    link: "/",
+  },
+  {
+    name: "Đăng ký/ Đăng nhập",
+    link: PageLinks.Acc_Logging,
+  },
+];
+
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function NavBar() {
@@ -41,7 +58,7 @@ function NavBar() {
   const handleCloseNavMenu = () => {
     console.log(123);
     //open new url
-    window.open(PageLinks.Acc_Logging);
+    // window.open(PageLinks.Acc_Logging);
     setAnchorElNav(null);
   };
 
@@ -110,7 +127,7 @@ function NavBar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+          <AirplaneTicketIcon sx={{ mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
@@ -127,16 +144,17 @@ function NavBar() {
               textDecoration: "none",
             }}
           >
-            LOGO
+            HuJet
           </Typography>
+
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
+            {pages_full.map((page) => (
               <Button
-                key={page}
+                key={page.name}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page}
+                <a href={page.link}>{page.name}</a>
               </Button>
             ))}
           </Box>

@@ -1,5 +1,7 @@
+
 import { FC } from "react";
 import NavBar from "../Navbar";
+
 interface Props {
   children: React.ReactNode;
 }

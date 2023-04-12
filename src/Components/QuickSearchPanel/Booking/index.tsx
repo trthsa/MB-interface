@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import BookingSteps from "./components/BookingSteps";
 import ConfrimPanel from "./components/ConfrimPanel";
 import FlightSelectionPanel, {
@@ -46,6 +46,8 @@ function BookingPanel() {
     );
   };
   useEffect(() => {
+    // console.log("fetching flight data");
+
     fetchFlightData();
   }, []);
 
@@ -68,45 +70,50 @@ function BookingPanel() {
   );
   //?step 4: Confirm and pay
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const StepSpawn = () => {
-    switch (activeStep) {
-      case 0:
-        return <FlightSelectionPanel setter={setFlightID} next={handleNext} />;
-      case 1:
-        return (
-          <PassengerInfoInput setter={setPassengerInfo} next={handleNext} />
-        );
-      case 2:
-        return (
-          <SelectPaymentMethod setter={setPaymentMethod} next={handleNext} />
-        );
-      case 3:
-        return (
-          <ConfrimPanel
-            flightsData={flightData}
-            flightID={flightID || ""}
-            userCCID={passengerInfo?.ccid}
-            email={passengerInfo?.email}
-            phone={passengerInfo?.phone}
-            paymentMethod={paymentMethod}
-            setter={setIsConfirmed}
-            next={handleNext}
-          />
-        );
-      case 4:
-        return (
-          <ReceiptPanel
-            isConfirmed={isConfirmed}
-            flightsData={flightData}
-            flightID={flightID || ""}
-            setter={() => {}}
-            next={handleNext}
-          />
-        );
-      default:
-        return <div>Not found</div>;
-    }
-  };
+  const StepSpawn = useMemo(
+    () => () => {
+      switch (activeStep) {
+        case 0:
+          return (
+            <FlightSelectionPanel setter={setFlightID} next={handleNext} />
+          );
+        case 1:
+          return (
+            <PassengerInfoInput setter={setPassengerInfo} next={handleNext} />
+          );
+        case 2:
+          return (
+            <SelectPaymentMethod setter={setPaymentMethod} next={handleNext} />
+          );
+        case 3:
+          return (
+            <ConfrimPanel
+              flightsData={flightData}
+              flightID={flightID || ""}
+              userCCID={passengerInfo?.ccid}
+              email={passengerInfo?.email}
+              phone={passengerInfo?.phone}
+              paymentMethod={paymentMethod}
+              setter={setIsConfirmed}
+              next={handleNext}
+            />
+          );
+        case 4:
+          return (
+            <ReceiptPanel
+              isConfirmed={isConfirmed}
+              flightsData={flightData}
+              flightID={flightID || ""}
+              setter={() => {}}
+              next={handleNext}
+            />
+          );
+        default:
+          return <div>Not found</div>;
+      }
+    },
+    [activeStep]
+  );
   return (
     <div className="flex justify-center">
       <div className="w-[80%] flex flex-col gap-10 justify-center items-center">

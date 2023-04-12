@@ -1,10 +1,11 @@
+
 import { Button, FormControlLabel, Paper, TextField } from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import FormGroup from "@mui/material/FormGroup";
+import { DatePicker } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AirPortItem, { AirPort } from "./components/AirPortItem";
-import { DatePicker } from "@mui/x-date-pickers";
 
 enum InputCursor {
   DepartFrom,
@@ -174,7 +175,7 @@ function QuickSearchPanel() {
                 },
               }}
             /> */}
-             <DatePicker />
+            <DatePicker />
           </div>{" "}
           <div className="flex gap-0 p-b-3 pt-5 px-2 py-2 border-[2px] border-slate-300/80 rounded-b-2xl">
             <div className="relative">

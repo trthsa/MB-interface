@@ -45,11 +45,13 @@ function ConfrimPanel({
       headers: {
         accept: "*/*",
         "content-type": "application/json",
+        "accept-encoding": "gzip, deflate, br",
+        "accept-language": "vi,en-US;q=0.9,en-GB;q=0.8,en;q=0.7,la;q=0.6",
+        "cache-control": "no-cache",
       },
 
       body: JSON.stringify(sendingData),
       method: "POST",
-      mode: "cors",
       credentials: "omit",
     }).then((res) => {
       setter(true);

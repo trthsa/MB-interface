@@ -1,7 +1,8 @@
 import { useState } from "react";
-import Login from "../Components/AccLogging/Login";
-import Register from "../Components/AccLogging/Register";
-import { HungStyle } from "../interface/style_login_Hung";
+
+import Login from "../components/AccLogging/Login";
+import Register from "../components/AccLogging/Register";
+import { HungStyle } from "../style/style_login_Hung";
 enum AccLoggingType {
   LOGIN,
   REGISTER,

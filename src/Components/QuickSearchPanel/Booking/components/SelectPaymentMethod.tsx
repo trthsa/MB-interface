@@ -30,8 +30,8 @@ function SelectPaymentMethod({ next, setter }: StepProps & {}) {
     null
   );
   return (
-    <div>
-      <Paper elevation={3} className="w-[80%] p-5 min-w-[650px]">
+    <div className="flex justify-center">
+      <Paper elevation={3} className="w-[80%] p-5 md:min-w-[650px]">
         <div className="flex flex-col gap-5">
           <h1 className="text-xl">Chọn hình thức thanh toán </h1>
           <div className="flex flex-wrap gap-5">

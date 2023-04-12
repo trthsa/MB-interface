@@ -1,4 +1,4 @@
-import QuickSearchPanel from "../Components/QuickSearchPanel/QuickSearchPanel";
+import QuickSearchPanel from "../components/QuickSearchPanel/QuickSearchPanel";
 
 function HomeView() {
   return (
