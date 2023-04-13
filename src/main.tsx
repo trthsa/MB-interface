@@ -6,11 +6,14 @@ import App from "./App";
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import PageWrapper from "./components/Layout/PageWrapper";
+import { AdminMenuLink } from "./components/SideMenu";
 import "./index.css";
 import AdminPage from "./pages/Admin";
+import FilghtRoutePage from "./pages/AdminMenuPages/FilghtRoutePage";
 import FlightPage from "./pages/AdminMenuPages/FlightPage";
 import BookingView from "./views/BookingView";
 import LoginViews from "./views/LoginViews";
+import InvoicePage from "./pages/AdminMenuPages/InvoicePage";
 
 const router = createBrowserRouter([
   {
@@ -31,12 +34,26 @@ const router = createBrowserRouter([
 
     children: [
       {
-        path: "flight",
+        path: AdminMenuLink.Flight,
         element: <FlightPage />,
       },
       {
-        path: "flightRoute",
-        element: <div>FlightRoute</div>,
+        path: AdminMenuLink.FlightRoute,
+        element: <FilghtRoutePage />,
+      },
+      {
+        path: AdminMenuLink.Invoice,
+        element: <InvoicePage />,
+      },
+      {
+        path: AdminMenuLink.None,
+        element: (
+          <div className="flex h-full justify-center items-center cursor-pointer">
+            <p className="text-2xl bg-sky-500 text-white p-5 rounded-full">
+              Hãy chọn menu!
+            </p>
+          </div>
+        ),
       },
     ],
   },

@@ -1,0 +1,11 @@
+import FlightRouteOverView from "../../views/AdminViews/FlightRouteOverView";
+
+function FilghtRoutePage() {
+  return (
+    <div>
+      <FlightRouteOverView />
+    </div>
+  );
+}
+
+export default FilghtRoutePage;

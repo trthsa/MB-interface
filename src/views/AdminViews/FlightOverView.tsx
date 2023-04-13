@@ -1,4 +1,7 @@
-import { useEffect, useState } from "react";
+import { Box, Modal } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { Flight } from "../../components/interface/Flight";
+import LoadingIcon from "../../style/components/LoadingIcon";
 
 const fetchFlights = async () => {
   const response = await fetch("https://localhost:44379/api/Flight/GetAll");
@@ -6,63 +9,7 @@ const fetchFlights = async () => {
   return data;
 };
 
-const sampleFlight = {
-  flights: {
-    id: 1,
-    seats: 300,
-    arrivalTime: "2023-05-18T17:21:53.204",
-    statusId: 3,
-    flightRouteID: 7,
-    airLineId: 1,
-    departureTime: "2023-05-18T18:22:53.204",
-    timeFly: "2023-04-04T18:21:53.204",
-    codeFlight: "vl2021",
-  },
-  status: {
-    id: 3,
-    name: "Sẵn sàng",
-  },
-  route: {
-    id: 7,
-    distance: "300km",
-    flightTime: "string",
-  },
-  price: {
-    id: 1,
-    price: 590000,
-    flightID: 1,
-    date: "2023-05-18T03:25:57.53",
-  },
-  airLine: {
-    id: 1,
-    name: "Vietnam Airlines ",
-    logo: "string",
-  },
-  detail: {
-    id: 10,
-    flightRouteId: 7,
-    beginAirPortId: 10,
-    endAirPortId: 5,
-  },
-  begin: {
-    id: 10,
-    name: "Vân Đồn",
-    location: "Quảng Ninh",
-    iata: "VDO",
-    gates: "1",
-  },
-  end: {
-    id: 5,
-    name: "Nội Bài",
-    location: "Hà Nội ",
-    iata: "HAN",
-    gates: "66",
-  },
-};
-
-type Flight = typeof sampleFlight;
-
-export default function FlightView() {
+export default function FlightOverView() {
   const [flights, setFlights] = useState<Flight[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
@@ -76,19 +23,14 @@ export default function FlightView() {
 
   return (
     <>
-      <div>
+      <div className="px-20 pt-10">
+        <h1 className="text-3xl font-bold mb-5">Flight Information</h1>
+
         {isLoading ? (
-          <div>Loading...</div>
+          <LoadingIcon />
         ) : (
           <>
-            {flights.map((flight, index) => {
-              return (
-                <div key={index}>
-                  {/* <div>{flight.flights.codeFlight}</div> */}
-                  <FlightTable flight={flight} />
-                </div>
-              );
-            })}                   
+            <FlightsTable flights={flights} />
           </>
         )}
       </div>
@@ -96,11 +38,31 @@ export default function FlightView() {
   );
 }
 
-const FlightTable = ({ flight }: { flight: Flight }) => {
+const FlightItem = ({ flight }: { flight: Flight }) => {
+  //create a simple table to display meta flight information
   return (
-    <div className="max-w-5xl mx-auto py-10">
-      <h2 className="text-3xl font-bold mb-5">Flight Information</h2>
-      <table className="min-w-full divide-y divide-gray-200">
+    <div>
+      <div>{flight.flights.codeFlight}</div>
+      <div>{flight.flights.departureTime}</div>
+    </div>
+  );
+};
+
+const FlightItemTable = ({
+  flight,
+  isScrolling,
+}: {
+  flight: Flight;
+  isScrolling?: boolean;
+}) => {
+  return (
+    <div
+      className={`max-w-5xl h-full mx-auto ${
+        isScrolling && "overflow-scroll scrollbar-thin"
+      }`}
+    >
+      <h2 className="text-3xl font-bold mb-5">Flight Details Information</h2>
+      <table className=" divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
             <th
@@ -329,5 +291,194 @@ const FlightTable = ({ flight }: { flight: Flight }) => {
         </tbody>
       </table>
     </div>
+  );
+};
+const FlightMetadataTable = ({ flight }: { flight: Flight }) => {
+  return (
+    <div className="bg-white shadow-md rounded my-6">
+      <table className="w-full table-auto">
+        <tbody>
+          <tr>
+            <td className="px-6 py-4 whitespace-nowrap font-bold">Flight ID</td>
+            <td className="px-6 py-4 whitespace-nowrap">{flight.flights.id}</td>
+          </tr>
+          <tr>
+            <td className="px-6 py-4 whitespace-nowrap font-bold">
+              Airline Name
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap">
+              {flight.airLine.name}
+            </td>
+          </tr>
+          <tr>
+            <td className="px-6 py-4 whitespace-nowrap font-bold">
+              Flight Code
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap">
+              {flight.flights.codeFlight}
+            </td>
+          </tr>
+          <tr>
+            <td className="px-6 py-4 whitespace-nowrap font-bold">
+              Departure Time
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap">
+              {flight.flights.departureTime}
+            </td>
+          </tr>
+          <tr>
+            <td className="px-6 py-4 whitespace-nowrap font-bold">
+              Arrival Time
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap">
+              {flight.flights.arrivalTime}
+            </td>
+          </tr>
+          <tr>
+            <td className="px-6 py-4 whitespace-nowrap font-bold">
+              Flight Status
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap">
+              {flight.status.name}
+            </td>
+          </tr>
+          <tr>
+            <td className="px-6 py-4 whitespace-nowrap font-bold">
+              Flight Route Distance
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap">
+              {flight.route.distance}
+            </td>
+          </tr>
+          <tr>
+            <td className="px-6 py-4 whitespace-nowrap font-bold">Price</td>
+            <td className="px-6 py-4 whitespace-nowrap">
+              {flight.price.price}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+const FlightsTable = ({ flights }: { flights: Flight[] }) => {
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const clickedFlight = useRef<Flight | null>(null);
+  return (
+    <>
+      <div className={`bg-white shadow-md rounded my-6`}>
+        <table className="w-full table-auto">
+          <thead>
+            <tr>
+              <th className="px-6 py-4 text-left bg-gray-100 border-b">
+                Flight ID
+              </th>
+              <th className="px-6 py-4 text-left bg-gray-100 border-b">
+                Airline Name
+              </th>
+              <th className="px-6 py-4 text-left bg-gray-100 border-b">
+                Flight Code
+              </th>
+              <th className="px-6 py-4 text-left bg-gray-100 border-b">
+                Departure Time
+              </th>
+              <th className="px-6 py-4 text-left bg-gray-100 border-b">
+                Arrival Time
+              </th>
+              <th className="px-6 py-4 text-left bg-gray-100 border-b">
+                Flight Status
+              </th>
+              <th className="px-6 py-4 text-left bg-gray-100 border-b">
+                Flight Route Distance
+              </th>
+              <th className="px-6 py-4 text-left bg-gray-100 border-b">
+                Price
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {flights.map((flight) => (
+              <tr
+                onClick={() => {
+                  clickedFlight.current = flight;
+                  handleOpen();
+                }}
+                key={flight.flights.id}
+                className="hover:bg-gray-100 border-b cursor-pointer"
+              >
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {flight.flights.id}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {flight.airLine.name}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {flight.flights.codeFlight}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {flight.flights.departureTime}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {flight.flights.arrivalTime}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {flight.status.name}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {flight.route.distance}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {flight.price.price}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {/* <Button onClick={handleOpen}>Open modal</Button> */}
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          //make flex and justify center
+
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "auto",
+            height: "80%",
+            bgcolor: "background.paper",
+            border: "2px solid var(--primary-color)",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <FlightItemTable
+            isScrolling
+            flight={
+              flights.filter(
+                (flight) =>
+                  flight.flights.id === clickedFlight.current?.flights.id
+              )[0]
+            }
+          />
+        </Box>
+
+        {/* <Typography id="modal-modal-title" variant="h6" component="h2">
+            Text in a modal
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </Typography> */}
+      </Modal>
+    </>
   );
 };

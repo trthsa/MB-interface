@@ -15,7 +15,6 @@ function LoginViews() {
       <style>{HungStyle}</style>
       <div className="form_dn_dk">
         <HeaderData state={state} setter={setState} />
-
         {state === AccLoggingType.REGISTER ? <Register /> : <Login />}
       </div>
     </div>
