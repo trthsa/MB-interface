@@ -127,7 +127,7 @@ function NavBar() {
               ))}
             </Menu>
           </Box>
-          <AirplaneTicketIcon sx={{ mr: 1 }} />
+
           <Typography
             variant="h5"
             noWrap

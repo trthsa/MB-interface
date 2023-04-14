@@ -13,7 +13,7 @@ function LoginViews() {
   return (
     <div className="main">
       <style>{HungStyle}</style>
-      <div className="form_dn_dk">
+      <div className="form_dn_dk scale-[90%]">
         <HeaderData state={state} setter={setState} />
         {state === AccLoggingType.REGISTER ? <Register /> : <Login />}
       </div>
@@ -29,7 +29,7 @@ const HeaderData = ({
   state: AccLoggingType;
 }) => {
   return (
-    <>
+    <div className="">
       <div className="form_logo">
         <div
           className="logo_plane"
@@ -45,14 +45,18 @@ const HeaderData = ({
       <p className={`desc ${state === AccLoggingType.LOGIN && "active"}`}>
         <span>Tạo tài khoản</span>
         <br />
-        Bằng cách nhấp vào nút "Đăng ký" bên dưới, điều đó chứng tỏ rằng Khách
-        hàng đã đọc và đồng ý với "Điều khoản và Điều kiện của chúng tôi.❤️
+        <p className="text-sm">
+          Bằng cách nhấp vào nút "Đăng ký" bên dưới, điều đó chứng tỏ rằng Khách
+          hàng đã đọc và đồng ý với "Điều khoản và Điều kiện của chúng tôi.❤️
+        </p>
       </p>
       <p className={`desc ${state === AccLoggingType.REGISTER && "active"}`}>
         <span>Chào Mừng</span>
         <br />
-        Đăng nhập vào tài khoản của quý khách. Dùng tài khoản để làm mọi việc
-        liên quan đến hệ thống của chúng tôi ❤️
+        <p className="text-sm">
+          Đăng nhập vào tài khoản của quý khách. Dùng tài khoản để làm mọi việc
+          liên quan đến hệ thống của chúng tôi ❤️
+        </p>
       </p>
       {/* <!--  --> */}
       <div className="form_heading">
@@ -78,7 +82,7 @@ const HeaderData = ({
           Đăng ký
         </div>
       </div>
-    </>
+    </div>
   );
 };
 export default LoginViews;

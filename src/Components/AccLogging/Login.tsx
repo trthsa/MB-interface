@@ -1,17 +1,39 @@
+import AutoModeIcon from "@mui/icons-material/AutoMode";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const ErrorHandle = ({ error }: { error: string }) => {
+  return (
+    <span className="bg-red-100 w-full text-red-800 text-lg  font-medium inline-flex items-center px-2.5 py-2 rounded dark:bg-red-700 dark:text-red-400 border border-red-400">
+      {error || "There's an Error occured"}
+    </span>
+  );
+};
 
 function Login() {
+  //TODO navigate
+  const navigate = useNavigate();
+
   //TODO state
+  const [isLogging, setIsLogging] = useState(false);
   const [isLoggedin, setIsLoggedin] = useState(false);
+  const [isError, setIsError] = useState(false);
   const countRef = useRef<HTMLParagraphElement>(null);
   //? Login state
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-  const createData = {
-    userName: usernameRef.current?.value || "",
-    password: passwordRef.current?.value || "",
+  const createData = () => {
+    return {
+      userName: usernameRef.current?.value,
+      password: passwordRef.current?.value,
+    };
   };
-  const handleLoginUser = ({ data }: { data: typeof createData }) => {
+  const handleLoginUser = ({
+    data,
+  }: {
+    data: ReturnType<typeof createData>;
+  }) => {
+    setIsLogging(true);
     fetch("https://localhost:44379/api/User/Login", {
       headers: {
         accept: "*/*",
@@ -21,35 +43,39 @@ function Login() {
       method: "POST",
     })
       .then((response) => {
-        setIsLoggedin(true);
+        //get status code
+        if (response.status === 200) {
+          setIsLoggedin(true);
+        } else {
+          setIsError(true);
+        }
       })
       .catch((err) => {
         setIsLoggedin(false);
+      })
+      .finally(() => {
+        setIsLogging(false);
       });
   };
 
   if (isLoggedin) {
-    const interval = setInterval(() => {
-      if (countRef.current) {
-        if (Number(countRef.current.innerText) <= 0) {
-          window.open("/");
-          return;
-        }
-        countRef.current.innerText = String(
-          Number(countRef.current?.innerText) - 1
-        );
-      }
-    }, 1500);
+    setTimeout(() => {
+      navigate("/");
+    }, 3000);
     return (
       <div className="text-3xl p-10 text-emerald-600">
-        Successfully login {createData.userName} <br />
-        Chuyển trang trong <p ref={countRef}>3</p>
+        Successfully login {createData().userName} <br />
+        Chuyển trang trong <p ref={countRef}>3 giây</p>
       </div>
     );
   }
+
   return (
     <form action="" method="POST" className="form" id="form-2">
       <div className="form-group">
+        <span className="py-5 text-xl">
+          {isError && <ErrorHandle error="Tài khoản đăng nhập không đúng!" />}
+        </span>
         <label htmlFor="email" className="form-label">
           Email
         </label>
@@ -81,16 +107,21 @@ function Login() {
       <button
         onClick={(e) => {
           e.preventDefault();
+          // console.log(createData());
+
           handleLoginUser({
-            data: createData,
+            data: createData(),
           });
         }}
-        className="form-submit"
+        className="form-submit text-lg font-light"
       >
-        Đăng Nhập
+        {isLogging ? (
+          <AutoModeIcon fontSize="inherit" className="animate-spin" />
+        ) : (
+          "Đăng Nhập"
+        )}
       </button>
     </form>
   );
 }
-
 export default Login;

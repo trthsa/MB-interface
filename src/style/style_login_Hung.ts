@@ -1,15 +1,12 @@
 export const HungStyle = `
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
+
 html {
   color: #333;
-  font-size: 62.5%;
+  // font-size: 62.5%;
   font-family: "Open Sans", sans-serif;
 }
 .main {
+  
   background: #f1f1f1;
   min-height: 100vh;
   display: flex;
@@ -168,7 +165,7 @@ html {
   color: #fff;
   border: none;
   width: 100%;
-  font-size: 14px;
+  // font-size: 14px;
   border-radius: 8px;
   cursor: pointer;
 }
