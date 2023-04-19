@@ -1,11 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;1,100;1,200&display=swap');
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    html {
+        font-family: "Poppins", system-ui, sans-serif, -apple-system, Roboto,
+            "Helvetica Neue", Arial;
+    }
+}
 
 :root {
     --primary-color: rgb(59 130 246);
 }
+
+
+
 
 /* create a custome class from tailwindcss class bg-blue-500 p-3 rounded-lg */
 .blue_bg {
@@ -18,4 +30,8 @@
 
 .lite_g_border:hover {
     @apply border-blue-500/40;
+}
+
+.gray_box_style {
+    @apply border-[1px] border-black/20 bg-slate-300/5 p-5 shadow-inner rounded-md;
 }

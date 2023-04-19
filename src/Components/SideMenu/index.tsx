@@ -58,7 +58,7 @@ function SideMenu() {
   return (
     <div className="flex flex-col">
       {/* <SideMenuItem link={AdminMenuLink.None} name={"Menu"} /> */}
-      <div className="font-thin text-center py-5 bg-sky-400 text-2xl cursor-pointer">
+      <div className="text-center py-3 bg-sky-500/80 text-xl cursor-pointer">
         Menu
       </div>
       {MenuItems.map((item, index) => (
