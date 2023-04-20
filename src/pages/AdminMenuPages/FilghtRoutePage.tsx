@@ -1,4 +1,4 @@
-import FlightRouteOverView from "../../views/AdminViews/FlightRouteOverView";
+import FlightRouteOverView from "../../views/AdminViews/FlightRouteOverView/FlightRouteOverView";
 
 function FilghtRoutePage() {
   return (
