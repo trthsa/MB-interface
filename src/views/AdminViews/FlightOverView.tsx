@@ -1,4 +1,4 @@
-import { Box, Modal } from "@mui/material";
+import { Box, Button, Modal, TextField } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { Flight } from "../../components/interface/Flight";
 import LoadingIcon from "../../style/components/LoadingIcon";
@@ -290,6 +290,7 @@ const FlightItemTable = ({
           </tr>
         </tbody>
       </table>
+      
     </div>
   );
 };
@@ -367,9 +368,10 @@ const FlightsTable = ({ flights }: { flights: Flight[] }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const clickedFlight = useRef<Flight | null>(null);
+
   return (
     <>
-      <div className={`bg-white shadow-md rounded my-6`}>
+      <div className={`bg-white shadow-md rounded my-6 overflow-auto`}>
         <table className="w-full table-auto">
           <thead>
             <tr>
@@ -457,19 +459,55 @@ const FlightsTable = ({ flights }: { flights: Flight[] }) => {
             height: "80%",
             bgcolor: "background.paper",
             border: "2px solid var(--primary-color)",
+            borderRadius: 5,
             boxShadow: 24,
             p: 4,
           }}
         >
-          <FlightItemTable
-            isScrolling
-            flight={
-              flights.filter(
-                (flight) =>
-                  flight.flights.id === clickedFlight.current?.flights.id
-              )[0]
-            }
-          />
+          <div className="flex h-full">
+            <div className="overflow-auto h-full relative">
+              <FlightItemTable
+                isScrolling
+                flight={
+                  flights.filter(
+                    (flight) =>
+                      flight.flights.id === clickedFlight.current?.flights.id
+                  )[0]
+                }
+              />
+            </div>
+            <div className="w-[450px]">
+              <div className="gray_box_style ml-5">
+                <h1 className="gray_box_style text-xl font-bold">
+                  Chọn thông tin cần thay đổi
+                </h1>
+                <div className="gray_box_style my-10">
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    <Box sx={{ mb: 1 }}>Thay đổi </Box>
+                    <form
+                    // onSubmit={handleSubmit}
+                    >
+                      <TextField
+                        label="Enter your answer"
+                        // value={inputValue}
+                        // onChange={(event) => setInputValue(event.target.value)}
+                        variant="outlined"
+                        fullWidth
+                        sx={{
+                          mb: 1,
+
+                          //
+                        }}
+                      />
+                    </form>
+                    <Button type="submit" variant="contained">
+                      Submit
+                    </Button>
+                  </Box>
+                </div>
+              </div>
+            </div>
+          </div>
         </Box>
 
         {/* <Typography id="modal-modal-title" variant="h6" component="h2">
