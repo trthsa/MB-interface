@@ -92,8 +92,8 @@ export default function FlightSelectionPanel({
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="medium" aria-label="a dense table">
         <TableHead>
-          <TableRow className="bg-mainColor text-white hover:bg-mainColor/50">
-            <TableCell>Hãng</TableCell>
+          <TableRow className="bg-mainColor/10 text-white hover:bg-mainColor/50 border">
+            <TableCell >Hãng</TableCell>
             <TableCell align="right">Giờ cất cánh</TableCell>
             <TableCell align="right">Giờ đáp</TableCell>
             <TableCell align="right">Thời gian bay</TableCell>

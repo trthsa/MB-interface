@@ -40,15 +40,41 @@ function ConfrimPanel({
       nationCCIDID: Number(userCCID),
     },
   };
-  const boardCastTicketToServer = () => {
-    fetch("https://localhost:44379/api/Ticket/Create", {
+  const boardCastTicketToServer = async () => {
+    // fetch("https://localhost:44379/api/Ticket/Create", {
+    //   headers: {
+    //     accept: "*/*",
+    //     "content-type": "application/json",
+    //   },
+
+    //   body: JSON.stringify(sendingData),
+    //   method: "POST",
+    // }).then((res) => {
+    //   setter(true);
+    //   console.log(res);
+    //   console.log("done");
+    // });
+    return fetch("https://localhost:44379/api/Ticket/Create", {
       headers: {
         accept: "*/*",
+        "accept-language": "vi,en-US;q=0.9,en-GB;q=0.8,en;q=0.7,la;q=0.6",
+        "cache-control": "no-cache",
         "content-type": "application/json",
+        pragma: "no-cache",
+        "sec-ch-ua":
+          '"Chromium";v="110", "Not A(Brand";v="24", "YaBrowser";v="23"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"Windows"',
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
       },
-
-      body: JSON.stringify(sendingData),
+      referrer: "https://localhost:44379/swagger/index.html",
+      referrerPolicy: "strict-origin-when-cross-origin",
+      body: '{"ticket":{"id":0,"dateTime":"2023-04-21T01:19:14.618Z","ticketclassId":0,"paymentMethods":"string","flightID":0,"voucherID":0,"codeSeats":"string","tempId":0},"customer":{"id":0,"phone":"string","email":"string","nationCCIDID":0}}',
       method: "POST",
+      mode: "cors",
+      credentials: "omit",
     }).then((res) => {
       setter(true);
       console.log(res);
@@ -99,8 +125,8 @@ function ConfrimPanel({
 
         <Button
           onClick={() => {
-            boardCastTicketToServer();
-            next();
+            boardCastTicketToServer().then(() => next());
+            // next();
           }}
           variant="contained"
         >
