@@ -3,7 +3,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 
-import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import PageWrapper from "./components/Layout/PageWrapper";
 import { AdminMenuLink } from "./components/SideMenu";
@@ -11,9 +10,9 @@ import "./index.css";
 import AdminPage from "./pages/Admin";
 import FilghtRoutePage from "./pages/AdminMenuPages/FilghtRoutePage";
 import FlightPage from "./pages/AdminMenuPages/FlightPage";
+import InvoicePage from "./pages/AdminMenuPages/InvoicePage";
 import BookingView from "./views/BookingView";
 import LoginViews from "./views/LoginViews";
-import InvoicePage from "./pages/AdminMenuPages/InvoicePage";
 
 const router = createBrowserRouter([
   {
@@ -60,11 +59,17 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <PageWrapper>
-        <RouterProvider router={router} />
-      </PageWrapper>
-    </LocalizationProvider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  //   <LocalizationProvider dateAdapter={AdapterDayjs}>
+  //     <PageWrapper>
+  //       <RouterProvider router={router} />
+  //     </PageWrapper>
+  //   </LocalizationProvider>
+  // </React.StrictMode>
+
+  <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <PageWrapper>
+      <RouterProvider router={router} />
+    </PageWrapper>
+  </LocalizationProvider>
 );

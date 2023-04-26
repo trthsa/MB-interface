@@ -1,7 +1,8 @@
 import { Box, Button, Modal, TextField } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
-import { Flight } from "../../components/interface/Flight";
-import LoadingIcon from "../../style/components/LoadingIcon";
+import { Flight } from "../../../components/interface/Flight";
+import LoadingIcon from "../../../style/components/LoadingIcon";
+import BasicModal from "./components/CreateFlightModal";
 
 const fetchFlights = async () => {
   const response = await fetch("https://localhost:44379/api/Flight/GetAll");
@@ -25,7 +26,7 @@ export default function FlightOverView() {
     <>
       <div className="px-20 pt-10">
         <h1 className="text-3xl font-bold mb-5">Flight Information</h1>
-
+        <BasicModal />
         {isLoading ? (
           <LoadingIcon />
         ) : (
@@ -37,16 +38,6 @@ export default function FlightOverView() {
     </>
   );
 }
-
-const FlightItem = ({ flight }: { flight: Flight }) => {
-  //create a simple table to display meta flight information
-  return (
-    <div>
-      <div>{flight.flights.codeFlight}</div>
-      <div>{flight.flights.departureTime}</div>
-    </div>
-  );
-};
 
 const FlightItemTable = ({
   flight,
@@ -287,75 +278,6 @@ const FlightItemTable = ({
               End Airport Gates
             </td>
             <td className="px-6 py-4 whitespace-nowrap">{flight.end.gates}</td>
-          </tr>
-        </tbody>
-      </table>
-      
-    </div>
-  );
-};
-const FlightMetadataTable = ({ flight }: { flight: Flight }) => {
-  return (
-    <div className="bg-white shadow-md rounded my-6">
-      <table className="w-full table-auto">
-        <tbody>
-          <tr>
-            <td className="px-6 py-4 whitespace-nowrap font-bold">Flight ID</td>
-            <td className="px-6 py-4 whitespace-nowrap">{flight.flights.id}</td>
-          </tr>
-          <tr>
-            <td className="px-6 py-4 whitespace-nowrap font-bold">
-              Airline Name
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              {flight.airLine.name}
-            </td>
-          </tr>
-          <tr>
-            <td className="px-6 py-4 whitespace-nowrap font-bold">
-              Flight Code
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              {flight.flights.codeFlight}
-            </td>
-          </tr>
-          <tr>
-            <td className="px-6 py-4 whitespace-nowrap font-bold">
-              Departure Time
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              {flight.flights.departureTime}
-            </td>
-          </tr>
-          <tr>
-            <td className="px-6 py-4 whitespace-nowrap font-bold">
-              Arrival Time
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              {flight.flights.arrivalTime}
-            </td>
-          </tr>
-          <tr>
-            <td className="px-6 py-4 whitespace-nowrap font-bold">
-              Flight Status
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              {flight.status.name}
-            </td>
-          </tr>
-          <tr>
-            <td className="px-6 py-4 whitespace-nowrap font-bold">
-              Flight Route Distance
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              {flight.route.distance}
-            </td>
-          </tr>
-          <tr>
-            <td className="px-6 py-4 whitespace-nowrap font-bold">Price</td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              {flight.price.price}
-            </td>
           </tr>
         </tbody>
       </table>
