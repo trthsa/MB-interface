@@ -11,6 +11,7 @@ import AdminPage from "./pages/Admin";
 import FilghtRoutePage from "./pages/AdminMenuPages/FilghtRoutePage";
 import FlightPage from "./pages/AdminMenuPages/FlightPage";
 import InvoicePage from "./pages/AdminMenuPages/InvoicePage";
+import MemberPage from "./pages/MemberPage";
 import BookingView from "./views/BookingView";
 import LoginViews from "./views/LoginViews";
 
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
   {
     path: "/acc_logging",
     element: <LoginViews />,
+  },
+  {
+    path: "/member",
+    element: <MemberPage />,
   },
   {
     path: "admin",

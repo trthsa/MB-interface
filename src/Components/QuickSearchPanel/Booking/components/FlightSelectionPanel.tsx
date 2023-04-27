@@ -1,4 +1,5 @@
 import DoneAllIcon from "@mui/icons-material/DoneAll";
+import { CircularProgress } from "@mui/material";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -27,7 +28,7 @@ export function createData(
     Gia,
   };
 }
-function formatTimestamp(timestamp: any) {
+export function formatTimestamp(timestamp: any) {
   const date = new Date(timestamp);
 
   const year = date.getFullYear().toString().slice(2);
@@ -55,7 +56,12 @@ export default function FlightSelectionPanel({
   next,
   isConfirmStep,
   FlightDataInput,
-}: StepProps & { isConfirmStep?: boolean; FlightDataInput?: FlightData[] }) {
+  extraButtonOnConfirm,
+}: StepProps & {
+  isConfirmStep?: boolean;
+  FlightDataInput?: FlightData[];
+  extraButtonOnConfirm?: React.ReactNode;
+}) {
   //TODO fetch flight data from API
   const [flightData, setFlightData] = useState<FlightData[]>([]);
   const fetchFlightData = async () => {
@@ -85,7 +91,7 @@ export default function FlightSelectionPanel({
   };
   useEffect(() => {
     console.log("FlightDataInput", flightData);
-    fetchFlightData();
+    !FlightDataInput && fetchFlightData();
   }, []);
 
   return (
@@ -93,7 +99,7 @@ export default function FlightSelectionPanel({
       <Table sx={{ minWidth: 650 }} size="medium" aria-label="a dense table">
         <TableHead>
           <TableRow className="bg-mainColor/10 text-white hover:bg-mainColor/50 border">
-            <TableCell >Hãng</TableCell>
+            <TableCell>Hãng</TableCell>
             <TableCell align="right">Giờ cất cánh</TableCell>
             <TableCell align="right">Giờ đáp</TableCell>
             <TableCell align="right">Thời gian bay</TableCell>
@@ -126,16 +132,27 @@ export default function FlightSelectionPanel({
                     }}
                     variant="contained"
                   >
-                    Chọn
+                    {"Chọn"}
                   </Button>
                 </TableCell>
               ) : (
                 <TableCell align="right">
-                  <DoneAllIcon className="text-green-600" />
+                  {extraButtonOnConfirm || (
+                    <DoneAllIcon className="text-green-600" />
+                  )}
                 </TableCell>
               )}
             </TableRow>
           ))}
+          {flightData.length === 0 && FlightDataInput?.length === 0 ? (
+            //make it center
+            <div
+              className="flex justify-center items-center absolute top-0 left-0 w-full h-full bg-white bg-opacity-50 z-50
+            "
+            >
+              <CircularProgress />
+            </div>
+          ) : null}
         </TableBody>
       </Table>
     </TableContainer>

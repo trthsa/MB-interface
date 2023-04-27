@@ -18,15 +18,16 @@ const pages = [
 ];
 enum PageLinks {
   Acc_Logging = "acc_logging",
+  Member_Page = "member",
 }
 const pages_full = [
   {
     name: "Vé máy bay",
-    link: "/",
+    link: PageLinks.Member_Page,
   },
   {
     name: "Lịch sử đặt vé",
-    link: "/",
+    link: PageLinks.Member_Page,
   },
   {
     name: "Tra cứu chuyến bay",

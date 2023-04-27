@@ -39,12 +39,12 @@ const CreateFlightForm = () => {
   const [formData, setFormData] = useState({
     // id: 0,
     seats: 0,
-    arrivalTime: "2023-04-30T06:42:16.962",
+    arrivalTime: "",
     statusId: 0,
     flightRouteID: 0,
     airLineId: 0,
-    departureTime: "2023-04-30T06:42:16.962",
-    timeFly: "1111",
+    departureTime: "",
+    timeFly: "",
     codeFlight: "",
   });
   const [statusList, setStatusList] = useState<Status[]>([]);
@@ -106,15 +106,23 @@ const CreateFlightForm = () => {
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     let updatedValue = value;
-    if (
-      name === "arrivalTime" ||
-      name === "departureTime" ||
-      name === "timeFly"
-    ) {
+    if (name === "arrivalTime" || name === "departureTime") {
       const date = new Date(value);
       updatedValue = date.toISOString().slice(0, -8);
     }
-    setFormData({ ...formData, [name]: updatedValue });
+    //TODO calculate time fly = arrivalTime - departureTime
+
+    setFormData({
+      ...formData,
+      [name]: updatedValue,
+      //TODO calculate time fly = arrivalTime - departureTime in hours
+      timeFly: (
+        (new Date(formData.arrivalTime).getTime() -
+          new Date(formData.departureTime).getTime()) /
+        60_000 /
+        24
+      ).toString(),
+    });
   };
 
   return (
@@ -217,8 +225,10 @@ const CreateFlightForm = () => {
             <TextField
               name="timeFly"
               label="Time Fly"
+              disabled
               fullWidth
-              type="datetime-local"
+              // type="datetime-local"
+              type="number"
               InputLabelProps={{
                 shrink: true,
               }}
