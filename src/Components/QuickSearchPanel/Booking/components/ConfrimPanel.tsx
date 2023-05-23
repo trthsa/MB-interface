@@ -25,19 +25,19 @@ function ConfrimPanel({
   const sendingData = {
     ticket: {
       id: 0,
-      dateTime: "2023-04-06T00:58:40.649Z",
-      ticketclassId: 0,
-      paymentMethods: paymentMethod,
-      flightID: flightID,
-      voucherID: 0,
-      codeSeats: "string",
+      dateTime: "2023-05-21T06:09:18.307Z",
+      ticketclassId: 1,
+      paymentMethods: "momo",
+      flightID: 19,
+      voucherID: 1,
+      codeSeats: "B12",
       tempId: 0,
     },
     customer: {
       id: 0,
-      phone: phone,
-      email: email,
-      nationCCIDID: Number(userCCID),
+      phone: "034891231",
+      email: "nghiadeptrai@123",
+      nationCCIDID: 1,
     },
   };
   const boardCastTicketToServer = async () => {
@@ -54,31 +54,22 @@ function ConfrimPanel({
     //   console.log(res);
     //   console.log("done");
     // });
-    return fetch("https://localhost:44379/api/Ticket/Create", {
+
+    return await fetch("https://localhost:44379/api/Ticket/Create", {
       headers: {
         accept: "*/*",
         "accept-language": "vi,en-US;q=0.9,en-GB;q=0.8,en;q=0.7,la;q=0.6",
         "cache-control": "no-cache",
         "content-type": "application/json",
         pragma: "no-cache",
-        "sec-ch-ua":
-          '"Chromium";v="110", "Not A(Brand";v="24", "YaBrowser";v="23"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"Windows"',
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-origin",
+        cookie:
+          "BanveMaybay=CfDJ8GjwrKHReKNIpQsZl3cudoIUPs5OZ1NCEDyOR%2B4ognZtqSR3FGzTxAu%2FFICWGZFuzavtpUZ82PWpwU1VXp1i3TyQ%2FvffI4dvct%2BziBhXsc%2FkWUEKnAeUJCCf1Gdw8i9eVGdY0%2FTPlzEUmE1PnEvE3ytgOLtB85a%2FJsg37%2FOWyPLA",
       },
-      referrer: "https://localhost:44379/swagger/index.html",
-      referrerPolicy: "strict-origin-when-cross-origin",
-      body: '{"ticket":{"id":0,"dateTime":"2023-04-21T01:19:14.618Z","ticketclassId":0,"paymentMethods":"string","flightID":0,"voucherID":0,"codeSeats":"string","tempId":0},"customer":{"id":0,"phone":"string","email":"string","nationCCIDID":0}}',
+      body: '{"ticket":{"id":0,"dateTime":"2023-05-21T06:09:18.307Z","ticketclassId":1,"paymentMethods":"momo","flightID":3,"voucherID":1,"codeSeats":"B12","tempId":0},"customer":{"id":0,"phone":"034891231","email":"nghiadeptrai@123","nationCCIDID":1}}',
       method: "POST",
-      mode: "cors",
-      credentials: "omit",
     }).then((res) => {
       setter(true);
-      console.log(res);
-      console.log("done");
+      return res.json();
     });
   };
   useEffect(() => {
@@ -125,7 +116,10 @@ function ConfrimPanel({
 
         <Button
           onClick={() => {
-            boardCastTicketToServer().then(() => next());
+            boardCastTicketToServer().then((i) => {
+              console.log(i);
+              next();
+            });
             // next();
           }}
           variant="contained"

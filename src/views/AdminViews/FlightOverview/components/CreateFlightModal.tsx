@@ -17,6 +17,13 @@ import { AirLine } from "../../../../interface/AirLine";
 import { FlightRoute } from "../../../../interface/FlightRoute";
 import { Status } from "../../../../interface/Status";
 import PopupModal from "./PopupModal";
+//TODO this is a function to calculate the spread bewtween two date to return an hour number
+function calculateHourSpread(date1: string, date2: string): number {
+  const millisecondsDiff: number =
+    new Date(date2).getTime() - new Date(date1).getTime();
+  const hoursDiff: number = millisecondsDiff / (1000 * 60 * 60);
+  return hoursDiff;
+}
 
 export default function CreateFlightModal() {
   return (
@@ -116,11 +123,9 @@ const CreateFlightForm = () => {
       ...formData,
       [name]: updatedValue,
       //TODO calculate time fly = arrivalTime - departureTime in hours
-      timeFly: (
-        (new Date(formData.arrivalTime).getTime() -
-          new Date(formData.departureTime).getTime()) /
-        60_000 /
-        24
+      timeFly: calculateHourSpread(
+        formData.arrivalTime,
+        formData.departureTime
       ).toString(),
     });
   };
@@ -216,6 +221,7 @@ const CreateFlightForm = () => {
               type="datetime-local"
               InputLabelProps={{
                 shrink: true,
+                //min date is arrival time
               }}
               value={formData.departureTime}
               onChange={handleChange}

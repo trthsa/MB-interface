@@ -1,8 +1,15 @@
-import { Box, Button, Modal, TextField } from "@mui/material";
+import { Box, Button, CircularProgress, Modal, TextField } from "@mui/material";
+import _ from "lodash";
 import { useEffect, useRef, useState } from "react";
 import { Flight } from "../../../components/interface/Flight";
 import LoadingIcon from "../../../style/components/LoadingIcon";
 import BasicModal from "./components/CreateFlightModal";
+
+interface IChosenFlight {
+  name: string;
+  value: string;
+  flightID: string;
+}
 
 const fetchFlights = async () => {
   const response = await fetch("https://localhost:44379/api/Flight/GetAll");
@@ -42,10 +49,57 @@ export default function FlightOverView() {
 const FlightItemTable = ({
   flight,
   isScrolling,
+  setChoosenAtribute,
 }: {
   flight: Flight;
   isScrolling?: boolean;
+  setChoosenAtribute: (value: string[]) => void;
 }) => {
+  // _.forEach(flight, (value, key) => {
+  //   _.forEach(value, (value1, key1) => {
+  //     console.log("Key:", key1);
+  //     console.log("Value:", value1);
+  //   });
+  // });
+
+  const ItemSpreader: React.FC<{
+    value: any;
+    name: string;
+    //listener
+    setChoosenAtribute?: (value: string[]) => void;
+  }> = ({ value, name }) => {
+    return (
+      <tr
+        onClick={() =>
+          setChoosenAtribute && setChoosenAtribute([name || "", value || ""])
+        }
+        className="hover:bg-gray-100"
+      >
+        <td className="px-6 py-4 whitespace-nowrap font-bold">{name}</td>
+        <td className="px-6 py-4 whitespace-nowrap">{value}</td>
+      </tr>
+    );
+  };
+  const renderFlightItems = () => {
+    const items: JSX.Element[] = [];
+    _.forEach(flight, (value, key) => {
+      _.forEach(value, (value1, key1) => {
+        //TODO skip any key that have "Id" in it - case insensitive
+        if (key1.toLowerCase().includes("id")) return;
+        items.push(
+          <ItemSpreader
+            setChoosenAtribute={setChoosenAtribute}
+            key={key1 + value1 + Math.random() * 1000}
+            name={key1}
+            value={value1}
+          />
+        );
+      });
+    });
+
+    return items;
+  };
+
   return (
     <div
       className={`max-w-5xl h-full mx-auto ${
@@ -71,6 +125,9 @@ const FlightItemTable = ({
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
+          {renderFlightItems()}
+        </tbody>
+        {/* <tbody className="bg-white divide-y divide-gray-200">
           <tr>
             <td className="px-6 py-4 whitespace-nowrap font-bold">Flight ID</td>
             <td className="px-6 py-4 whitespace-nowrap">{flight.flights.id}</td>
@@ -279,16 +336,23 @@ const FlightItemTable = ({
             </td>
             <td className="px-6 py-4 whitespace-nowrap">{flight.end.gates}</td>
           </tr>
-        </tbody>
+        </tbody> */}
       </table>
     </div>
   );
 };
 
 const FlightsTable = ({ flights }: { flights: Flight[] }) => {
+  //TODO this will be the holder for what will be changed () state
+  const [chosenAttributes, setChosenAttributes] = useState<string[]>(["", ""]);
+
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    //TODO clear chosen attributes
+    setChosenAttributes(["", ""]);
+  };
   const clickedFlight = useRef<Flight | null>(null);
 
   return (
@@ -389,6 +453,7 @@ const FlightsTable = ({ flights }: { flights: Flight[] }) => {
           <div className="flex h-full">
             <div className="overflow-auto h-full relative">
               <FlightItemTable
+                setChoosenAtribute={setChosenAttributes}
                 isScrolling
                 flight={
                   flights.filter(
@@ -404,15 +469,33 @@ const FlightsTable = ({ flights }: { flights: Flight[] }) => {
                   Chọn thông tin cần thay đổi
                 </h1>
                 <div className="gray_box_style my-10">
-                  <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <Box sx={{ mb: 1 }}>Thay đổi </Box>
+                  <Box
+                    sx={{ display: "flex", rowGap: 3, flexDirection: "column" }}
+                  >
+                    <Box sx={{ mb: 1 }}>
+                      Bạn sẽ tiến hành thay đổi -
+                      <span className="font-bold text-primary-color text-xl ml-2 mr-1 ">
+                        {chosenAttributes[0]}
+                      </span>{" "}
+                    </Box>
                     <form
                     // onSubmit={handleSubmit}
                     >
                       <TextField
-                        label="Enter your answer"
+                        label={
+                          chosenAttributes[0] === ""
+                            ? "Hãy chọn thuộc tính cần đổi ở bảng bên trái"
+                            : "Chọn thuộc tính"
+                        }
+                        placeholder="Hãy nhập giá trị mới"
+                        disabled={chosenAttributes[0] === ""}
                         // value={inputValue}
-                        // onChange={(event) => setInputValue(event.target.value)}
+                        onChange={(event) =>
+                          setChosenAttributes([
+                            chosenAttributes[0],
+                            event.target.value,
+                          ])
+                        }
                         variant="outlined"
                         fullWidth
                         sx={{
@@ -420,10 +503,19 @@ const FlightsTable = ({ flights }: { flights: Flight[] }) => {
 
                           //
                         }}
+                        value={chosenAttributes[1]}
                       />
                     </form>
-                    <Button type="submit" variant="contained">
-                      Submit
+                    <Button
+                      onAbort={() => {
+                        //TODO set the attribute to the main flight
+
+                        setChosenAttributes(["", ""]);
+                      }}
+                      type="submit"
+                      variant="contained"
+                    >
+                      <CircularProgress /> Thay đổi
                     </Button>
                   </Box>
                 </div>
@@ -431,13 +523,6 @@ const FlightsTable = ({ flights }: { flights: Flight[] }) => {
             </div>
           </div>
         </Box>
-
-        {/* <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography> */}
       </Modal>
     </>
   );
