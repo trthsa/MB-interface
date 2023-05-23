@@ -1,6 +1,8 @@
+import { Flight } from "./../Components/interface/Flight";
 import { AirLine } from "../interface/AirLine";
 import { FlightRoute } from "../interface/FlightRoute";
 import { Status, sample_data } from "../interface/Status";
+import { FlightDataType } from "../interface/FlightData";
 
 //TODO get status from server
 const fetchStatus = (): Status[] => {
@@ -33,4 +35,15 @@ const fetchAirline = async () => {
   return data as AirLine[];
 };
 
-export { fetchStatus, fetchFlightRoute, fetchAirline };
+//TODO fetch a Flight
+const fetchFlight = async (id: string) => {
+  const raw_data = await fetch(`https://localhost:44379/api/Flight/Get/${id}`, {
+    method: "GET",
+    headers: {
+      accept: "*/*",
+    },
+  });
+  const data = await raw_data.json();
+  return data as FlightDataType;
+};
+export { fetchStatus, fetchFlightRoute, fetchAirline, fetchFlight };

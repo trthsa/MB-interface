@@ -11,20 +11,20 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 const pages = [
-  "Vé máy bay",
+  // "Vé máy bay",
   "Lịch sử đặt vé",
   "Tra cứu chuyến bay",
   "Đăng ký/ Đăng nhập",
-];
+];    
 enum PageLinks {
   Acc_Logging = "acc_logging",
   Member_Page = "member",
 }
 const pages_full = [
-  {
-    name: "Vé máy bay",
-    link: PageLinks.Member_Page,
-  },
+  // {
+  //   name: "Vé máy bay",
+  //   link: PageLinks.Member_Page,
+  // },
   {
     name: "Lịch sử đặt vé",
     link: PageLinks.Member_Page,
@@ -38,8 +38,6 @@ const pages_full = [
     link: PageLinks.Acc_Logging,
   },
 ];
-
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
