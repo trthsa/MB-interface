@@ -1,6 +1,30 @@
 import AutoModeIcon from "@mui/icons-material/AutoMode";
+import jwt_decode from "jwt-decode";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+export const LocalSaver = (key: string, value: string) => {
+  try {
+    localStorage.setItem(key, value);
+    console.log("Value saved to local storage.");
+  } catch (error) {
+    console.error("Error saving value to local storage:", error);
+  }
+};
+export const LocalGetter = (key: string) => {
+  try {
+    const value = localStorage.getItem(key);
+    if (value === null) {
+      console.log("Value not found in local storage.");
+      return null;
+    }
+    console.log("Value retrieved from local storage:", value);
+    return JSON.parse(value);
+  } catch (error) {
+    console.error("Error retrieving value from local storage:", error);
+    return null;
+  }
+};
 
 const ErrorHandle = ({ error }: { error: string }) => {
   return (
@@ -42,9 +66,14 @@ function Login() {
       body: JSON.stringify(data),
       method: "POST",
     })
-      .then((response) => {
+      .then(async (response) => {
         //get status code
+
         if (response.status === 200) {
+          const raw = await response.json();
+          let decoded: any = await jwt_decode(raw?.token?.accessToken);
+          LocalSaver("user", JSON.stringify(decoded));
+
           setIsLoggedin(true);
         } else {
           setIsError(true);

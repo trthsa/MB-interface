@@ -1,49 +1,33 @@
-import { FlightRoute } from "../../../../components/interface/Flight";
+import { Invoice } from "../../../../components/interface/Flight";
 
 interface OProperty {
   Name: string;
   Value: string | number;
 }
 
-const FlightRouteItemTable = ({
-  flightRoute,
+const InvoiceItemTable = ({
+  invoice,
   isScrolling,
 }: {
-  flightRoute: FlightRoute;
+  invoice: Invoice;
   isScrolling?: boolean;
 }) => {
   const data: OProperty[] = [
     {
-      Name: "Route ID",
-      Value: flightRoute.detail.id,
+      Name: "Invoice ID",
+      Value: invoice.invoice.id,
     },
     {
-      Name: "Flight Name Start",
-      Value: flightRoute.begin.name,
+      Name: "Customer Email",
+      Value: invoice.tempcustomer.email,
     },
     {
-      Name: "AirPort ID Start",
-      Value: flightRoute.begin.location,
+      Name: "Payment Method",
+      Value: invoice.ticket.paymentMethods,
     },
     {
-      Name: "Gate Start",
-      Value: flightRoute.begin.gates,
-    },
-    {
-      Name: "Flight Name Arrival",
-      Value: flightRoute.end.name,
-    },
-    {
-      Name: "AirPort ID Arrival",
-      Value: flightRoute.end.iata,
-    },
-    {
-      Name: "Gate Arrival",
-      Value: flightRoute.end.gates,
-    },
-    {
-      Name: "Distance",
-      Value: flightRoute.route.distance,
+      Name: "Payment Status",
+      Value: invoice.invoice.paymentStatus,
     },
   ];
 
@@ -53,7 +37,7 @@ const FlightRouteItemTable = ({
         isScrolling && "overflow-scroll scrollbar-thin"
       }`}
     >
-      <h2 className="text-3xl font-bold mb-5">Flight Details Information</h2>
+      <h2 className="text-3xl font-bold mb-5">Invoice Details Information</h2>
       <table className="w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
@@ -96,4 +80,4 @@ const AProperty = ({ Name, Value }: OProperty) => {
     </tr>
   );
 };
-export default FlightRouteItemTable;
+export default InvoiceItemTable;

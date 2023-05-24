@@ -18,7 +18,7 @@ function AirPortItem({
       onClick={() => {
         console.log(312);
 
-        setter(airport.location);
+        setter(airport);
       }}
       className="hover:bg-gray-500/10 cursor-pointer scroll  p-3 flex items-center justify-between"
     >

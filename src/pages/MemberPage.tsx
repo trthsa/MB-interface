@@ -1,64 +1,156 @@
+import { Button, Link } from "@mui/material";
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
+
+import { fetchFlight } from "../api/apis";
+import { LocalGetter } from "../components/AccLogging/Login";
 import FlightSelectionPanel, {
   FlightData,
   createData,
   formatTimestamp,
 } from "../components/QuickSearchPanel/Booking/components/FlightSelectionPanel";
-import PopupModal from "../views/AdminViews/FlightOverview/components/PopupModal";
-import { Flight } from "../components/interface/Flight";
+import { Flight, Invoice } from "../components/interface/Flight";
 import { FlightDataType } from "../interface/FlightData";
-import { fetchFlight } from "../api/apis";
 import LoadingIcon from "../style/components/LoadingIcon";
+import PopupModal from "../views/AdminViews/FlightOverview/components/PopupModal";
+
+// example userInfo
+// {
+//     "UserName": "phong",
+//     "Id": "14",
+//     "email": "adsad@gmail.com",
+//     "TokenId": "ac1ac116-74e2-4df4-88b9-3222de524b2b",
+//     "nbf": 1684945212,
+//     "exp": 1684945272,
+//     "iat": 1684945212
+// }
 
 function MemberPage() {
-  const [flightData, setFlightData] = useState<FlightData[]>([]);
+  //TODO get user
+  const [user, setUser] = useState<any | null>();
 
+  useEffect(() => {
+    setUser(LocalGetter("user"));
+  }, []);
+  const [flightData, setFlightData] = useState<Flight[]>([]);
+  const [invoicesData, setInvoicesData] = useState<Invoice[]>([]);
   const fetchFlightData = async () => {
     //TODO
     const data = await fetch("https://localhost:44379/api/Flight/GetAll");
     // console.log(await data.json());
     const flightDataRes: any = await data.json();
-    setFlightData(
-      flightDataRes
-        .filter((item: { flights: { id: number } }) => item.flights.id === 9)
-        .map((flight: any) => {
-          return createData(
-            flight.flights.id,
-            flight.airLine.name,
-            flight.begin.name +
-              " " +
-              formatTimestamp(flight.flights.departureTime),
-            flight.end.name + " " + formatTimestamp(flight.flights.arrivalTime),
-            "3 tiếng 5 phút",
-            Number(flight.price.price)
-              .toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              })
-              .toString()
-          );
-        }) as FlightData[]
-    );
+    setFlightData(flightDataRes);
   };
+
+  const fetchInvoicesData = async () => {
+    const response = await fetch("https://localhost:44379/api/Invoice/GetAll");
+    const data = await response.json();
+    setInvoicesData(data);
+    return data;
+  };
+  const filteredInvoiceData = invoicesData.filter(
+    (item) => item.tempcustomer.email === user?.email
+  );
+  const filteredFlightData: {
+    flights: Flight[];
+    invoice: Invoice[];
+  } = {
+    flights: (() => {
+      const flightDataRes: Flight[] = [];
+      flightData.forEach((item) => {
+        let willTake = false;
+        filteredInvoiceData.forEach((invoice) => {
+          if (
+            invoice.ticket.flightID === Number(item.flights.id) &&
+            invoice.invoice.paymentStatus === "Đã thanh toán"
+          ) {
+            willTake = true;
+            flightDataRes.push(item);
+          }
+        });
+        return willTake;
+      });
+      return flightDataRes;
+    })(),
+    invoice: filteredInvoiceData,
+  };
+  console.log(filteredFlightData, "filteredFlightData");
+
+  // cónt
 
   useEffect(() => {
     fetchFlightData();
+    fetchInvoicesData();
   }, []);
-
+  if (!user?.UserName) {
+    return (
+      <div className="w-screen flex flex-col items-center justify-center mt-20">
+        <div className="p-10 bg-slate-500/10 rounded-2xl text-center">
+          Hãy đăng nhập để xem lịch sử mua vé của bạn <br />
+          <Button
+            sx={{
+              mt: 2,
+            }}
+            size="small"
+            variant="contained"
+          >
+            <Link
+              style={{
+                color: "white",
+              }}
+              href="/acc_logging"
+              className="text-white"
+            >
+              Đăng nhập
+            </Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="w-screen flex flex-col items-center justify-center mt-20">
       <div className="w-[80%] flex flex-col gap-10 justify-center items-center">
-        <div className="text-start w-full text-xl font-bold ">Lịch sử mua vé</div>
+        <div className="text-start w-full text-xl font-bold ">
+          Lịch sử mua vé của bạn{" "}
+          <span className="text-mainColor">{user?.UserName}</span>
+        </div>
         <FlightSelectionPanel
           isConfirmStep={true}
-          FlightDataInput={flightData}
-          extraButtonOnConfirm={<PopUpVeDetails flightid={"9"} />}
+          FlightDataInput={
+            filteredFlightData.flights.map((flight: any) => {
+              return createData(
+                flight.flights.id,
+                flight.airLine.name,
+                flight.begin.name +
+                  " " +
+                  formatTimestamp(flight.flights.departureTime),
+                flight.end.name +
+                  " " +
+                  formatTimestamp(flight.flights.arrivalTime),
+                "3 tiếng 5 phút",
+                Number(flight.price.price)
+                  .toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  })
+                  .toString()
+              );
+            }) as FlightData[]
+          }
+          extraInvoices={filteredFlightData.invoice}
+          extraDetailsButton={
+            <PopUpVeDetails invoice={undefined} flightid={"9"} />
+          }
           setter={function (id: any): void {
             throw new Error("Function not implemented.");
           }}
           next={function (): void {
             throw new Error("Function not implemented.");
+          }}
+          departData={{
+            from_id: null,
+            to_id: null,
           }}
         />
       </div>
@@ -67,18 +159,25 @@ function MemberPage() {
 }
 interface IProps4Flight {
   flightid: string;
+  invoice: Invoice | undefined;
 }
 
-const PopUpVeDetails = ({ flightid }: IProps4Flight) => {
+const PopUpVeDetails = ({ flightid, invoice }: IProps4Flight) => {
   return (
     <PopupModal buttonName={"Xem chi tiết"}>
-      <FlightDetails flightid={flightid} />
+      <FlightDetails flightid={flightid} invoice={invoice} />
     </PopupModal>
   );
 };
 
-const FlightDetails = ({ flightid }: IProps4Flight) => {
+const FlightDetails = ({ flightid, invoice }: IProps4Flight) => {
   const [flight, setFlight] = useState<FlightDataType>();
+  //TODO fetch invoice
+  if (!invoice) {
+    return <LoadingIcon />;
+  }
+  console.log(invoice, "invoice", flightid);
+
   useEffect(() => {
     fetchFlight(flightid).then((_flight) => setFlight(_flight));
   }, []);
@@ -90,7 +189,7 @@ const FlightDetails = ({ flightid }: IProps4Flight) => {
     <div className="min-w-[500px] bg-white rounded-lg shadow-md p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="text-xl font-bold">Flight Ticket</div>
-        <div className="text-sm text-gray-500">Ghế số 16A</div>
+        <div className="text-sm text-gray-500">Mã số {flight.flights.id}</div>
       </div>
       <hr className="mb-4" />
       <div className="flex items-center justify-between mb-4">

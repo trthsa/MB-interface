@@ -3,7 +3,7 @@ function LoadingIcon() {
   return (
     <div>
       <RefreshIcon className="animate-spin mr-2" />
-      Đang tải...
+      Đang xử lý...
     </div>
   );
 }

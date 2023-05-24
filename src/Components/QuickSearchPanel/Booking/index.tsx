@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import BookingSteps from "./components/BookingSteps";
 import ConfrimPanel from "./components/ConfrimPanel";
 import FlightSelectionPanel, {
@@ -16,12 +17,25 @@ export interface StepProps {
   next: () => void;
 }
 function BookingPanel() {
+  //TODO get flight params
+  let location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  let departFrom = searchParams.get("departFrom");
+  let departTo = searchParams.get("departTo");
+  console.log(departFrom, departTo);
   //TODO fetch flights data
   //TODO fetch flight data from API
   const [flightData, setFlightData] = useState<FlightData[]>([]);
   const fetchFlightData = async () => {
     //TODO
-    const data = await fetch("https://localhost:44379/api/Flight/GetAll");
+    let data = null;
+    if (String(departFrom) != "undefined" && String(departFrom) != "null") {
+      data = await fetch(
+        `https://localhost:44379/api/Search/Get/Route?idBegin=${departFrom}`
+      );
+    } else {
+      data = await fetch("https://localhost:44379/api/Flight/GetAll");
+    }
     // console.log(await data.json());
     // if (flightData.length <= 0) {
     //   return;
@@ -75,7 +89,14 @@ function BookingPanel() {
       switch (activeStep) {
         case 0:
           return (
-            <FlightSelectionPanel setter={setFlightID} next={handleNext} />
+            <FlightSelectionPanel
+              departData={{
+                from_id: departFrom,
+                to_id: departTo,
+              }}
+              setter={setFlightID}
+              next={handleNext}
+            />
           );
         case 1:
           return (
@@ -119,9 +140,34 @@ function BookingPanel() {
       <div className="w-[80%] flex flex-col gap-10 justify-center items-center">
         <BookingSteps step={activeStep} />
         <StepSpawn />
+        <BackAndForwardButton currentStep={activeStep} back={setActiveStep} />
       </div>
     </div>
   );
 }
+
+const BackAndForwardButton = ({
+  back,
+  currentStep,
+  maxStep = 4,
+}: {
+  back: (back: any) => void;
+  currentStep: number;
+  maxStep?: number;
+}) => {
+  if (currentStep - 1 < 0 || currentStep >= maxStep) {
+    return <></>;
+  }
+  return (
+    <div className="flex justify-between w-full">
+      <button
+        className="bg-[#F2F2F2] rounded-md px-4 py-2 text-[#3659b8] font-semibold"
+        onClick={() => back(currentStep - 1)}
+      >
+        Quay lại
+      </button>
+    </div>
+  );
+};
 
 export default BookingPanel;

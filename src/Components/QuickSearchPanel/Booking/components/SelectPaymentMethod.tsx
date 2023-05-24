@@ -79,7 +79,7 @@ const PaymentMethodButton = ({
         isActive ? "bg-slate-300/90" : "bg-slate-300/10 hover:bg-slate-300/50"
       } p-2 rounded-lg`}
     >
-      <img src={`${LogoAssets[paymentMethod]}`} alt="" />
+      <img src={`/${LogoAssets[paymentMethod]}`} alt="" />
     </div>
   );
 };

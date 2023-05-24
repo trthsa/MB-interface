@@ -8,8 +8,9 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StepProps } from "..";
+import { Invoice } from "../../../interface/Flight";
 
 export function createData(
   id: string,
@@ -57,18 +58,47 @@ export default function FlightSelectionPanel({
   isConfirmStep,
   FlightDataInput,
   extraButtonOnConfirm,
+  departData,
+  extraDetailsButton,
+  extraInvoices,
 }: StepProps & {
   isConfirmStep?: boolean;
   FlightDataInput?: FlightData[];
   extraButtonOnConfirm?: React.ReactNode;
+  extraDetailsButton?: React.ReactElement;
+  extraInvoices?: Invoice[];
+  departData: {
+    from_id: string | null;
+    to_id: string | null;
+  };
 }) {
   //TODO fetch flight data from API
+  console.log("FlightDataInput", FlightDataInput, "invoice", extraInvoices);
+
   const [flightData, setFlightData] = useState<FlightData[]>([]);
+  const ExtraDetailsButton = (id: string, invoice: Invoice | undefined) => {
+    return extraDetailsButton
+      ? React.cloneElement(extraDetailsButton!, {
+          flightid: id,
+          invoice: invoice,
+        })
+      : null;
+  };
   const fetchFlightData = async () => {
     //TODO
-    const data = await fetch("https://localhost:44379/api/Flight/GetAll");
+    let data = null;
+    if (
+      String(departData.from_id) != "undefined" &&
+      String(departData.to_id) != "null"
+    ) {
+      data = await fetch(
+        `https://localhost:44379/api/Search/Get/Route?idBegin=${departData.from_id}`
+      );
+    } else {
+      data = await fetch("https://localhost:44379/api/Flight/GetAll");
+    }
     // console.log(await data.json());
-    const flightDataRes: any = await data.json();
+    const flightDataRes: any = await data?.json();
     setFlightData(
       flightDataRes.map((flight: any) => {
         return createData(
@@ -108,7 +138,7 @@ export default function FlightSelectionPanel({
           </TableRow>
         </TableHead>
         <TableBody>
-          {(FlightDataInput || flightData).map((row) => (
+          {(FlightDataInput || flightData).map((row, index) => (
             <TableRow
               className="hover:bg-mainColor/10"
               key={row.id + Math.random() * 10}
@@ -137,9 +167,11 @@ export default function FlightSelectionPanel({
                 </TableCell>
               ) : (
                 <TableCell align="right">
-                  {extraButtonOnConfirm || (
-                    <DoneAllIcon className="text-green-600" />
-                  )}
+                  {extraButtonOnConfirm ||
+                    ExtraDetailsButton(
+                      row.id,
+                      extraInvoices ? extraInvoices[index] : undefined
+                    ) || <DoneAllIcon className="text-green-600" />}
                 </TableCell>
               )}
             </TableRow>

@@ -1,4 +1,4 @@
-import InvoiceOverView from "../../views/AdminViews/InvoiceOverView";
+import InvoiceOverView from "../../views/AdminViews/InvoiceOverView/InvoiceOverView";
 
 function InvoicePage() {
   return (

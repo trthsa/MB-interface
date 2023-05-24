@@ -3,7 +3,7 @@ import _ from "lodash";
 import { useEffect, useRef, useState } from "react";
 import { Flight } from "../../../components/interface/Flight";
 import LoadingIcon from "../../../style/components/LoadingIcon";
-import BasicModal from "./components/CreateFlightModal";
+import CreateFlightModal from "./components/CreateFlightModal";
 
 interface IChosenFlight {
   name: string;
@@ -33,7 +33,7 @@ export default function FlightOverView() {
     <>
       <div className="px-20 pt-10">
         <h1 className="text-3xl font-bold mb-5">Flight Information</h1>
-        <BasicModal />
+        <CreateFlightModal />
         {isLoading ? (
           <LoadingIcon />
         ) : (

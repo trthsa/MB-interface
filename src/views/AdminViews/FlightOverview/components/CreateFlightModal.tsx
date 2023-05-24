@@ -41,19 +41,50 @@ export default function CreateFlightModal() {
     </PopupModal>
   );
 }
-
+const DateRawParser = (_date: string) => {
+  const date = new Date(_date);
+  let updatedValue = date.toISOString();
+  return updatedValue;
+};
 const CreateFlightForm = () => {
   const [formData, setFormData] = useState({
-    // id: 0,
-    seats: 0,
-    arrivalTime: "",
-    statusId: 0,
-    flightRouteID: 0,
-    airLineId: 0,
-    departureTime: "",
-    timeFly: "",
-    codeFlight: "",
+    flight: {
+      id: 0,
+      seats: 0,
+      arrivalTime: "2023-05-23T06:06:18.025Z",
+      statusId: 1,
+      flightRouteID: 17,
+      airLineId: 1,
+      departureTime: "2023-05-23T06:06:18.025Z",
+      timeFly: "2023-05-23T06:06:18.025Z",
+      codeFlight: "string",
+    },
+    price: {
+      id: 0,
+      price: 120000,
+      flightID: 0,
+      date: "2023-05-23T06:06:18.025Z",
+    },
   });
+  const b = {
+    flight: {
+      id: 0,
+      seats: 0,
+      arrivalTime: "2023-05-23T00:35:00.000Z",
+      statusId: 1,
+      flightRouteID: 1,
+      airLineId: 2,
+      departureTime: "2023-05-23T00:35:00.000Z",
+      timeFly: "2023-05-23T06:06:18.025Z",
+      codeFlight: "string",
+    },
+    price: {
+      id: 0,
+      price: 120000,
+      flightID: 0,
+      date: "2023-05-23T06:06:18.025Z",
+    },
+  };
   const [statusList, setStatusList] = useState<Status[]>([]);
   const [flightRouteList, setFlightRouteList] = useState<FlightRoute[]>([]);
   const [airlineList, setAirlineList] = useState<AirLine[]>([]);
@@ -88,7 +119,15 @@ const CreateFlightForm = () => {
             "Content-Type": "application/json",
             accept: "*/*",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            ...formData,
+            flight: {
+              ...formData.flight,
+              arrivalTime: DateRawParser(formData.flight.arrivalTime),
+              departureTime: DateRawParser(formData.flight.departureTime),
+              // flightRouteID: 17,
+            },
+          }),
         }
       );
       if (response.ok) {
@@ -121,12 +160,16 @@ const CreateFlightForm = () => {
 
     setFormData({
       ...formData,
-      [name]: updatedValue,
+      flight: {
+        ...formData.flight,
+        [name]: updatedValue,
+        // timeFly: calculateHourSpread(
+        //   formData.flight.arrivalTime,
+        //   formData.flight.departureTime
+        // ).toString(),
+      },
       //TODO calculate time fly = arrivalTime - departureTime in hours
-      timeFly: calculateHourSpread(
-        formData.arrivalTime,
-        formData.departureTime
-      ).toString(),
+      // timeFly: 0,
     });
   };
 
@@ -139,7 +182,7 @@ const CreateFlightForm = () => {
               name="id"
               label="ID"
               fullWidth
-              value={formData.id}
+              value={formData.flight.id}
               onChange={handleChange}
             />
           </Grid> */}
@@ -148,7 +191,7 @@ const CreateFlightForm = () => {
               name="seats"
               label="Seats"
               fullWidth
-              value={formData.seats}
+              value={formData.flight.seats}
               onChange={handleChange}
             />
           </Grid>
@@ -161,7 +204,7 @@ const CreateFlightForm = () => {
               InputLabelProps={{
                 shrink: true,
               }}
-              value={formData.arrivalTime}
+              value={formData.flight.arrivalTime}
               onChange={handleChange}
             />
           </Grid>
@@ -171,7 +214,7 @@ const CreateFlightForm = () => {
               label="Status ID"
               fullWidth
               select
-              value={formData.statusId}
+              value={formData.flight.statusId}
               onChange={handleChange}
             >
               {statusList.map((status) => (
@@ -187,12 +230,16 @@ const CreateFlightForm = () => {
               label="Flight Route ID"
               fullWidth
               select
-              value={formData.flightRouteID}
+              value={formData.flight.flightRouteID}
               onChange={handleChange}
             >
               {flightRouteList.map((route) => (
-                <MenuItem key={route.detail.id} value={route.detail.id}>
-                  {route.detail.id} - {route.begin.name} {"=>"} {route.end.name}
+                <MenuItem
+                  key={route.detail.flightRouteId}
+                  value={route.detail.flightRouteId}
+                >
+                  {route.detail.flightRouteId} - {route.begin.name} {"=>"}{" "}
+                  {route.end.name}
                 </MenuItem>
               ))}
             </TextField>
@@ -203,7 +250,7 @@ const CreateFlightForm = () => {
               label="Airline ID"
               fullWidth
               select
-              value={formData.airLineId}
+              value={formData.flight.airLineId}
               onChange={handleChange}
             >
               {airlineList.map((airline) => (
@@ -223,7 +270,7 @@ const CreateFlightForm = () => {
                 shrink: true,
                 //min date is arrival time
               }}
-              value={formData.departureTime}
+              value={formData.flight.departureTime}
               onChange={handleChange}
             />
           </Grid>
@@ -238,7 +285,7 @@ const CreateFlightForm = () => {
               InputLabelProps={{
                 shrink: true,
               }}
-              value={formData.timeFly}
+              value={formData.flight.timeFly}
               onChange={handleChange}
             />
           </Grid>
@@ -247,7 +294,7 @@ const CreateFlightForm = () => {
               name="codeFlight"
               label="Code Flight"
               fullWidth
-              value={formData.codeFlight}
+              value={formData.flight.codeFlight}
               onChange={handleChange}
             />
           </Grid>

@@ -1,6 +1,7 @@
 import { Button, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import { StepProps } from "..";
+import LoadingIcon from "../../../../style/components/LoadingIcon";
 import FlightSelectionPanel, { FlightData } from "./FlightSelectionPanel";
 import { PaymentMethod } from "./SelectPaymentMethod";
 
@@ -22,25 +23,27 @@ function ConfrimPanel({
   paymentMethod?: PaymentMethod;
 }) {
   const [chosenFlight, setChosenFlight] = useState<FlightData[]>([]);
+  const [isSending, setIsSending] = useState(false);
   const sendingData = {
     ticket: {
       id: 0,
       dateTime: "2023-05-21T06:09:18.307Z",
       ticketclassId: 1,
-      paymentMethods: "momo",
-      flightID: 19,
+      paymentMethods: paymentMethod || "momo",
+      flightID: flightID || 0,
       voucherID: 1,
       codeSeats: "B12",
       tempId: 0,
     },
     customer: {
       id: 0,
-      phone: "034891231",
-      email: "nghiadeptrai@123",
-      nationCCIDID: 1,
+      phone: phone || "",
+      email: email || "",
+      nationCCIDID: userCCID || 1,
     },
   };
   const boardCastTicketToServer = async () => {
+    setIsSending(true);
     // fetch("https://localhost:44379/api/Ticket/Create", {
     //   headers: {
     //     accept: "*/*",
@@ -65,7 +68,8 @@ function ConfrimPanel({
         cookie:
           "BanveMaybay=CfDJ8GjwrKHReKNIpQsZl3cudoIUPs5OZ1NCEDyOR%2B4ognZtqSR3FGzTxAu%2FFICWGZFuzavtpUZ82PWpwU1VXp1i3TyQ%2FvffI4dvct%2BziBhXsc%2FkWUEKnAeUJCCf1Gdw8i9eVGdY0%2FTPlzEUmE1PnEvE3ytgOLtB85a%2FJsg37%2FOWyPLA",
       },
-      body: '{"ticket":{"id":0,"dateTime":"2023-05-21T06:09:18.307Z","ticketclassId":1,"paymentMethods":"momo","flightID":3,"voucherID":1,"codeSeats":"B12","tempId":0},"customer":{"id":0,"phone":"034891231","email":"nghiadeptrai@123","nationCCIDID":1}}',
+      body: JSON.stringify(sendingData),
+      // '{"ticket":{"id":0,"dateTime":"2023-05-21T06:09:18.307Z","ticketclassId":1,"paymentMethods":"momo","flightID":3,"voucherID":1,"codeSeats":"B12","tempId":0},"customer":{"id":0,"phone":"034891231","email":"nghiadeptrai@123","nationCCIDID":1}}',
       method: "POST",
     }).then((res) => {
       setter(true);
@@ -88,6 +92,10 @@ function ConfrimPanel({
             isConfirmStep
             next={next}
             setter={setter}
+            departData={{
+              from_id: null,
+              to_id: null,
+            }}
           />
         </div>
         <div className="bg-gray-100 rounded-lg p-4">
@@ -115,6 +123,7 @@ function ConfrimPanel({
         </div>
 
         <Button
+          disabled={isSending}
           onClick={() => {
             boardCastTicketToServer().then((i) => {
               console.log(i);
@@ -124,7 +133,13 @@ function ConfrimPanel({
           }}
           variant="contained"
         >
-          Thanh toán ngay
+          {isSending ? (
+            <>
+              <LoadingIcon />
+            </>
+          ) : (
+            "Thanh toán ngay"
+          )}
         </Button>
       </Paper>
     </div>

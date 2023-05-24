@@ -5,7 +5,7 @@ function BookingView() {
     <div className="py-10 min-h-full ">
       <BookingPanel />
       <div className="">
-        <img src="./Images/bg_may.png" alt="" className="absolute bottom-0 -z-10"/>
+        <img src="/Images/bg_may.png" alt="" className="absolute bottom-0 -z-10"/>
       </div>
     </div>
   );

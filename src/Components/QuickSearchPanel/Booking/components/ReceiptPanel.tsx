@@ -1,5 +1,5 @@
 import AutorenewIcon from "@mui/icons-material/Autorenew";
-import { Paper } from "@mui/material";
+import { Button, Link, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import { StepProps } from "..";
@@ -49,7 +49,31 @@ function ReceiptPanel({
             isConfirmStep
             next={next}
             setter={setter}
+            departData={{
+              from_id: null,
+              to_id: null,
+            }}
           />
+
+          <div className="flex w-full justify-end">
+            <Button
+              sx={{
+                mt: 2,
+              }}
+              size="small"
+              variant="contained"
+            >
+              <Link
+                style={{
+                  color: "white",
+                }}
+                href="/member"
+                className="text-white"
+              >
+                Quản lý vé cá nhân
+              </Link>
+            </Button>
+          </div>
         </div>
       </Paper>
     </div>

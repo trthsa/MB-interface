@@ -1,5 +1,6 @@
 import AirplaneTicketIcon from "@mui/icons-material/AirplaneTicket";
 import MenuIcon from "@mui/icons-material/Menu";
+import { Avatar, Link, Tooltip } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -10,12 +11,14 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import { useEffect } from "react";
+import { LocalGetter, LocalSaver } from "./AccLogging/Login";
 const pages = [
   // "Vé máy bay",
   "Lịch sử đặt vé",
   "Tra cứu chuyến bay",
   "Đăng ký/ Đăng nhập",
-];    
+];
 enum PageLinks {
   Acc_Logging = "acc_logging",
   Member_Page = "member",
@@ -38,8 +41,17 @@ const pages_full = [
     link: PageLinks.Acc_Logging,
   },
 ];
+const settings = ["Logout"];
 
 function NavBar() {
+  //TODO get user info
+  const [user, setUser] = React.useState<any | null>();
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setUser(LocalGetter("user"));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -156,6 +168,62 @@ function NavBar() {
                 <a href={page.link}>{page.name}</a>
               </Button>
             ))}
+          </Box>
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar
+                  alt={user?.UserName}
+                   src="/static/images/avatar/2.jpg"
+                />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: "45px" }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              <MenuItem>
+                <Typography textAlign="center">
+                  Chào <span className="text-mainColor">{user?.UserName}</span>
+                </Typography>
+              </MenuItem>
+
+              {settings.map((setting) => (
+                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  {setting === "Logout" ? (
+                    user ? (
+                      <Typography
+                        onClick={() => {
+                          LocalSaver("user", "");
+                          //trigger re-render
+                          window.location.reload();
+                        }}
+                      >
+                        {setting}
+                      </Typography>
+                    ) : (
+                      <Typography>
+                        <Link href="/acc_logging">Login</Link>
+                      </Typography>
+                    )
+                  ) : (
+                    <Typography textAlign="center">{setting}</Typography>
+                  )}
+                </MenuItem>
+              ))}
+            </Menu>
           </Box>
         </Toolbar>
       </Container>
