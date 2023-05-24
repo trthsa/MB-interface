@@ -32,7 +32,7 @@ export default function PassengerInfoInput({ next, setter }: StepProps & {}) {
         />
         <TextField
           disabled={user?.email ? true : false}
-          value={"0" + user?.exp}
+          value={user?.email && "0" + user?.exp}
           inputRef={refPhone}
           id="outlined-basic"
           label="Phone"
@@ -41,7 +41,7 @@ export default function PassengerInfoInput({ next, setter }: StepProps & {}) {
         />
         <TextField
           disabled={user?.email ? true : false}
-          value={1}
+          value={user?.email && 1}
           inputRef={refCCID}
           id="outlined-basic"
           label="CCID"
