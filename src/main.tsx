@@ -14,6 +14,7 @@ import InvoicePage from "./pages/AdminMenuPages/InvoicePage";
 import MemberPage from "./pages/MemberPage";
 import BookingView from "./views/BookingView";
 import LoginViews from "./views/LoginViews";
+import DoanhThu from "./doanhthu";
 
 const router = createBrowserRouter([
   {
@@ -52,11 +53,12 @@ const router = createBrowserRouter([
       {
         path: AdminMenuLink.None,
         element: (
-          <div className="flex h-full justify-center items-center cursor-pointer">
-            <p className="text-2xl bg-sky-500 text-white p-5 rounded-full">
-              Hãy chọn menu!
-            </p>
-          </div>
+          // <div className="flex h-full justify-center items-center cursor-pointer">
+          //   <p className="text-2xl bg-sky-500 text-white p-5 rounded-full">
+          //     Hãy chọn menu!
+          //   </p>
+          // </div>
+          <DoanhThu />
         ),
       },
     ],

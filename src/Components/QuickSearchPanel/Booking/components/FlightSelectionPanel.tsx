@@ -176,7 +176,7 @@ export default function FlightSelectionPanel({
               )}
             </TableRow>
           ))}
-          {flightData.length === 0 && FlightDataInput?.length === 0 ? (
+          {/* {flightData.length === 0 && FlightDataInput?.length === 0 ? (
             //make it center
             <div
               className="flex justify-center items-center absolute top-0 left-0 w-full h-full bg-white bg-opacity-50 z-50
@@ -184,7 +184,7 @@ export default function FlightSelectionPanel({
             >
               <CircularProgress />
             </div>
-          ) : null}
+          ) : null} */}
         </TableBody>
       </Table>
     </TableContainer>
