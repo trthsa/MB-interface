@@ -4,12 +4,15 @@ import QRCode from "react-qr-code";
 
 import { fetchFlight } from "../api/apis";
 import { LocalGetter } from "../components/AccLogging/Login";
-import FlightSelectionPanel, {
-  FlightData,
-  createData,
-  formatTimestamp,
-} from "../components/QuickSearchPanel/Booking/components/FlightSelectionPanel";
+import InvoiceStatusDisplay, {
+  InvoiceStatus,
+} from "../components/Display/InvoiceStatusDisplay";
+import FlightDisplayerPanel, {
+  ComboflightInvoiceInfo,
+} from "../components/QuickSearchPanel/Booking/components/FlightDisplayerPanel";
+import { formatTimestamp } from "../components/QuickSearchPanel/Booking/components/FlightSelectionPanel";
 import { Flight, Invoice } from "../components/interface/Flight";
+import { formatMoney } from "../doanhthu";
 import { FlightDataType } from "../interface/FlightData";
 import LoadingIcon from "../style/components/LoadingIcon";
 import PopupModal from "../views/AdminViews/FlightOverview/components/PopupModal";
@@ -24,6 +27,10 @@ import PopupModal from "../views/AdminViews/FlightOverview/components/PopupModal
 //     "exp": 1684945272,
 //     "iat": 1684945212
 // }
+interface IProps4Flight {
+  flightid: string;
+  invoice: Invoice | undefined;
+}
 
 function MemberPage() {
   //TODO get user
@@ -56,14 +63,13 @@ function MemberPage() {
     invoice: Invoice[];
   } = {
     flights: (() => {
+      console.log(flightData, "flightData");
+
       const flightDataRes: Flight[] = [];
       flightData.forEach((item) => {
         let willTake = false;
         filteredInvoiceData.forEach((invoice) => {
-          if (
-            invoice.ticket.flightID === Number(item.flights.id) &&
-            invoice.invoice.paymentStatus === "Đã thanh toán"
-          ) {
+          if (invoice.ticket.flightID === Number(item.flights.id)) {
             willTake = true;
             flightDataRes.push(item);
           }
@@ -74,10 +80,6 @@ function MemberPage() {
     })(),
     invoice: filteredInvoiceData,
   };
-  console.log(filteredFlightData, "filteredFlightData");
-
-  // cónt
-
   useEffect(() => {
     fetchFlightData();
     fetchInvoicesData();
@@ -111,33 +113,51 @@ function MemberPage() {
   return (
     <div className="w-screen flex flex-col items-center justify-center mt-20">
       <div className="w-[80%] flex flex-col gap-10 justify-center items-center">
+        <div className="flex gap-10 w-full justify-start">
+          <Item
+            name="Tổng chi tiêu"
+            value={
+              "đ" +
+              formatMoney(
+                filteredInvoiceData.reduce((acc, cur) => {
+                  if (cur.invoice.paymentStatus === InvoiceStatus.HUY) {
+                    return 0;
+                  }
+                  return acc + cur.invoice.amount;
+                }, 0)
+              )
+            }
+          />
+          <Item
+            name="Tổng giờ bay"
+            value={formatMoney(
+              filteredInvoiceData.reduce((acc, cur) => {
+                if (cur.invoice.paymentStatus === InvoiceStatus.HUY) {
+                  return 0;
+                }
+                return acc + 1;
+              }, 0) * 1.5
+            )}
+            color="bg-amber-400"
+          />
+        </div>
         <div className="text-start w-full text-xl font-bold ">
           Lịch sử mua vé của bạn{" "}
           <span className="text-mainColor">{user?.UserName}</span>
         </div>
-        <FlightSelectionPanel
-          isConfirmStep={true}
-          FlightDataInput={
+        <FlightDisplayerPanel
+          comboflightInvoiceInfo={
             filteredFlightData.flights.map((flight: any) => {
-              return createData(
-                flight.flights.id,
-                flight.airLine.name,
-                flight.begin.name +
-                  " " +
-                  formatTimestamp(flight.flights.departureTime),
-                flight.end.name +
-                  " " +
-                  formatTimestamp(flight.flights.arrivalTime),
-                "3 tiếng 5 phút",
-                Number(flight.price.price)
-                  .toLocaleString("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  })
-                  .toString()
-              );
-            }) as FlightData[]
+              return {
+                flight: flight,
+                invoice: filteredFlightData.invoice.find(
+                  (invoice) =>
+                    invoice.ticket.flightID === Number(flight.flights.id)
+                ),
+              } as ComboflightInvoiceInfo;
+            }) || []
           }
+          isConfirmStep={true}
           extraInvoices={filteredFlightData.invoice}
           extraDetailsButton={
             <PopUpVeDetails invoice={undefined} flightid={"9"} />
@@ -157,14 +177,14 @@ function MemberPage() {
     </div>
   );
 }
-interface IProps4Flight {
-  flightid: string;
-  invoice: Invoice | undefined;
-}
 
 const PopUpVeDetails = ({ flightid, invoice }: IProps4Flight) => {
+  const isCancelled = invoice?.invoice.paymentStatus === InvoiceStatus.HUY;
   return (
-    <PopupModal buttonName={"Xem chi tiết"}>
+    <PopupModal
+      isErr={isCancelled}
+      buttonName={isCancelled ? <p>Vé đã hủy</p> : <>Xem chi tiết</>}
+    >
       <FlightDetails flightid={flightid} invoice={invoice} />
     </PopupModal>
   );
@@ -185,12 +205,71 @@ const FlightDetails = ({ flightid, invoice }: IProps4Flight) => {
     return <LoadingIcon />;
   }
 
+  if (invoice.invoice.paymentStatus === InvoiceStatus.HUY) {
+    return (
+      <div className="min-w-[500px] bg-white rounded-lg shadow-md p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-xl font-bold">Flight Ticket</div>
+          <div className="text-sm text-gray-500">
+            <div className="flex flex-col items-end">
+              <p>Mã số {invoice.invoice.id}</p>
+              <InvoiceStatusDisplay
+                status={invoice.invoice.paymentStatus as InvoiceStatus}
+              />
+            </div>
+          </div>
+        </div>
+
+        <hr className="mb-4" />
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-sm text-gray-500">Khởi hành tại</div>
+          <div className="text-sm font-bold">
+            {flight?.begin.location} ({flight?.begin.name})
+          </div>
+        </div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-sm text-gray-500">Đến tại</div>
+          <div className="text-sm font-bold">
+            {flight?.end.location} ({flight?.end.name})
+          </div>
+        </div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-sm text-gray-500">Mã số vé</div>
+          <div className="text-sm font-bold">{flight?.detail.id}</div>
+        </div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-sm text-gray-500">Ngày khởi hành</div>
+          <div className="text-sm font-bold">
+            {formatTimestamp(flight?.flights.departureTime)}
+          </div>
+        </div>
+        <hr className="mb-4" />
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-sm text-gray-500">Cổng số</div>
+          <div className="text-sm font-bold">{flight?.begin.gates}</div>
+        </div>
+        <hr className="mb-4" />
+        <div className="flex items-center justify-between mb-4 text-red-500">
+          Vé đã được hủy bởi hỗ trợ viên
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-w-[500px] bg-white rounded-lg shadow-md p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="text-xl font-bold">Flight Ticket</div>
-        <div className="text-sm text-gray-500">Mã số {flight.flights.id}</div>
+        <div className="text-sm text-gray-500">
+          <div className="flex flex-col items-end">
+            <p>Mã số {invoice.invoice.id}</p>
+            <InvoiceStatusDisplay
+              status={invoice.invoice.paymentStatus as InvoiceStatus}
+            />
+          </div>
+        </div>
       </div>
+
       <hr className="mb-4" />
       <div className="flex items-center justify-between mb-4">
         <div className="text-sm text-gray-500">Khởi hành tại</div>
@@ -249,10 +328,29 @@ const FlightDetails = ({ flightid, invoice }: IProps4Flight) => {
         <QRCode
           size={256}
           style={{ height: "auto", maxWidth: "50%", width: "100%" }}
-          value={`VE${flight?.flights.id}-IDDEPART${flight?.begin.id}-IDARRIVAL${flight?.end.id}`}
+          value={`VE${flight?.flights.id}-ID${invoice.ticket.id}-IDDEPART${flight?.begin.id}-IDARRIVAL${flight?.end.id}`}
           viewBox={`0 0 256 256`}
         />
       </div>
+    </div>
+  );
+};
+
+const Item = ({
+  name,
+  value,
+  color = "bg-sky-400",
+}: {
+  name: string;
+  value: string;
+  color?: string;
+}) => {
+  return (
+    <div
+      className={`rounded-xl p-5 ${color} w-fit text-end flex flex-col gap-5 shadow-lg hover:scale-110 transform transition-all cursor-pointer`}
+    >
+      <p className="text-white text-xl font-light">{name}</p>
+      <p className="text-white text-3xl font-bold">{value}</p>
     </div>
   );
 };

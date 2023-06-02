@@ -116,6 +116,12 @@ const sampleInvoice = {
     area: null,
   },
 };
+const sampleUser = {
+  id: 1,
+  email: "Phong@gmail.com",
+  userName: "phong",
+};
 export type Flight = typeof sampleFlight;
 export type FlightRoute = typeof sampleFlightRoute;
 export type Invoice = typeof sampleInvoice;
+export type User = typeof sampleUser;

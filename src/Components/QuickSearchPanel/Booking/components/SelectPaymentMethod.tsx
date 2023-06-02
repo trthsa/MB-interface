@@ -25,9 +25,9 @@ const paymentMethods = [
   PaymentMethod.Paypal,
   // PaymentMethod.CASH,
 ];
-function SelectPaymentMethod({ next, setter }: StepProps & {}) {
+function SelectPaymentMethod({ next, setter, value }: StepProps & {}) {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(
-    null
+    value
   );
   return (
     <div className="flex justify-center">

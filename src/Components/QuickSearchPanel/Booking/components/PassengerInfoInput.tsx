@@ -1,11 +1,10 @@
-//create a passenger info input component using mui paper
-// Compare this snippet from src\components\QuickSearchPanel\Booking\components\PassengerInfoInput.tsx:
 import { Button, Paper, TextField } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { StepProps } from "..";
 import { LocalGetter } from "../../../AccLogging/Login";
 
 export default function PassengerInfoInput({ next, setter }: StepProps & {}) {
+  const loggedUser = LocalGetter("user");
   const [user, setUser] = useState<any | null>();
 
   useEffect(() => {
@@ -51,9 +50,9 @@ export default function PassengerInfoInput({ next, setter }: StepProps & {}) {
         <Button
           onClick={() => {
             setter({
-              email: refEmail.current?.value || "",
-              phone: refPhone.current?.value || "",
-              ccid: refCCID.current?.value || "",
+              email: refEmail.current?.value,
+              phone: refPhone.current?.value,
+              ccid: refCCID.current?.value,
             });
             next();
           }}

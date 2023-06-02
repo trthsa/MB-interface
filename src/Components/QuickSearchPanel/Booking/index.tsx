@@ -13,6 +13,7 @@ import SelectPaymentMethod, {
 } from "./components/SelectPaymentMethod";
 
 export interface StepProps {
+  value?: any;
   setter: (id: any) => void;
   next: () => void;
 }
@@ -104,7 +105,11 @@ function BookingPanel() {
           );
         case 2:
           return (
-            <SelectPaymentMethod setter={setPaymentMethod} next={handleNext} />
+            <SelectPaymentMethod
+              value={paymentMethod}
+              setter={setPaymentMethod}
+              next={handleNext}
+            />
           );
         case 3:
           return (

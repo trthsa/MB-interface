@@ -22,16 +22,21 @@ const style: SxProps = {
 interface Props {
   children: React.ReactNode;
   buttonName: React.ReactNode;
+  isErr?: boolean;
 }
 
-export default function PopupModal({ children, buttonName }: Props) {
+export default function PopupModal({ children, buttonName, isErr }: Props) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   return (
     <div>
-      <Button variant="contained" onClick={handleOpen}>
+      <Button
+        variant="contained"
+        color={isErr ? "error" : "primary"}
+        onClick={handleOpen}
+      >
         {buttonName}
       </Button>
       <Modal
@@ -40,15 +45,7 @@ export default function PopupModal({ children, buttonName }: Props) {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          {/* <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography> */}
-          {children}
-        </Box>
+        <Box sx={style}>{children}</Box>
       </Modal>
     </div>
   );

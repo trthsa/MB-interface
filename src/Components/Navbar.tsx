@@ -159,22 +159,32 @@ function NavBar() {
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages_full.map((page) => (
-              <Button
-                key={page.name}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                <a href={page.link}>{page.name}</a>
-              </Button>
-            ))}
+            {pages_full.map((page) => {
+              switch (page.name) {
+                case "Đăng ký/ Đăng nhập": {
+                  if (user?.UserName) {
+                    return <></>;
+                  }
+                }
+                default:
+                  return (
+                    <Button
+                      key={page.name}
+                      onClick={handleCloseNavMenu}
+                      sx={{ my: 2, color: "white", display: "block" }}
+                    >
+                      <a href={page.link}>{page.name}</a>
+                    </Button>
+                  );
+              }
+            })}
           </Box>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar
                   alt={user?.UserName}
-                   src="/static/images/avatar/2.jpg"
+                  src="/static/images/avatar/2.jpg"
                 />
               </IconButton>
             </Tooltip>

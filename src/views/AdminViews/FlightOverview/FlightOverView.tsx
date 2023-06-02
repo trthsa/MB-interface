@@ -55,23 +55,18 @@ const FlightItemTable = ({
   isScrolling?: boolean;
   setChoosenAtribute: (value: string[]) => void;
 }) => {
-  // _.forEach(flight, (value, key) => {
-  //   _.forEach(value, (value1, key1) => {
-  //     console.log("Key:", key1);
-  //     console.log("Value:", value1);
-  //   });
-  // });
-
   const ItemSpreader: React.FC<{
     value: any;
     name: string;
+    parent: string;
     //listener
     setChoosenAtribute?: (value: string[]) => void;
-  }> = ({ value, name }) => {
+  }> = ({ value, name, parent }) => {
     return (
       <tr
         onClick={() =>
-          setChoosenAtribute && setChoosenAtribute([name || "", value || ""])
+          setChoosenAtribute &&
+          setChoosenAtribute([name || "", value || "", parent])
         }
         className="hover:bg-gray-100"
       >
@@ -88,6 +83,7 @@ const FlightItemTable = ({
         if (key1.toLowerCase().includes("id")) return;
         items.push(
           <ItemSpreader
+            parent={key}
             setChoosenAtribute={setChoosenAtribute}
             key={key1 + value1 + Math.random() * 1000}
             name={key1}
@@ -354,7 +350,7 @@ const FlightsTable = ({ flights }: { flights: Flight[] }) => {
     setChosenAttributes(["", ""]);
   };
   const clickedFlight = useRef<Flight | null>(null);
-
+  const [isUpdating, setIsUpdating] = useState(false);
   return (
     <>
       <div className={`bg-white shadow-md rounded my-6 overflow-auto`}>
@@ -394,7 +390,7 @@ const FlightsTable = ({ flights }: { flights: Flight[] }) => {
                   clickedFlight.current = flight;
                   handleOpen();
                 }}
-                key={flight.flights.id}
+                key={flight.flights.id + Math.random() * 1000}
                 className="hover:bg-gray-100 border-b cursor-pointer"
               >
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -494,6 +490,7 @@ const FlightsTable = ({ flights }: { flights: Flight[] }) => {
                           setChosenAttributes([
                             chosenAttributes[0],
                             event.target.value,
+                            chosenAttributes[2],
                           ])
                         }
                         variant="outlined"
@@ -508,14 +505,35 @@ const FlightsTable = ({ flights }: { flights: Flight[] }) => {
                     </form>
                     <Button
                       onAbort={() => {
-                        //TODO set the attribute to the main flight
-
                         setChosenAttributes(["", ""]);
+                      }}
+                      onClick={() => {
+                        //TODO set the attribute to the main flight
+                        if (clickedFlight.current) {
+                          console.log(chosenAttributes);
+
+                          clickedFlight.current = _.set(
+                            clickedFlight.current,
+                            chosenAttributes[2] + "." + chosenAttributes[0],
+                            chosenAttributes[1]
+                          );
+                          console.log(clickedFlight.current);
+                          UpdateFlightFetch(clickedFlight.current).then(
+                            (response) => {
+                              if (response.status === 200) {
+                                setIsUpdating(false);
+                                handleClose();
+                              }
+                            }
+                          );
+                          setIsUpdating(true);
+                        }
                       }}
                       type="submit"
                       variant="contained"
+                      disabled={isUpdating}
                     >
-                      <CircularProgress /> Thay đổi
+                      {isUpdating ? <CircularProgress /> : "Thay đổi"}
                     </Button>
                   </Box>
                 </div>
@@ -525,5 +543,33 @@ const FlightsTable = ({ flights }: { flights: Flight[] }) => {
         </Box>
       </Modal>
     </>
+  );
+};
+
+const UpdateFlightFetch = async (flight: Flight) => {
+  return await fetch(
+    `https://localhost:44379/api/Flight/Update/${flight.flights.id}`,
+    {
+      headers: {
+        accept: "*/*",
+        "accept-language": "vi,en-US;q=0.9,en-GB;q=0.8,en;q=0.7,la;q=0.6",
+        "cache-control": "no-cache",
+        "content-type": "application/json",
+        pragma: "no-cache",
+        "sec-ch-ua":
+          '"Chromium";v="110", "Not A(Brand";v="24", "YaBrowser";v="23"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"Windows"',
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+      },
+      referrer: "https://localhost:44379/swagger/index.html",
+      referrerPolicy: "strict-origin-when-cross-origin",
+      body: JSON.stringify(flight.flights),
+      method: "PUT",
+      mode: "cors",
+      credentials: "omit",
+    }
   );
 };

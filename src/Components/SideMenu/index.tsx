@@ -1,8 +1,8 @@
 import ConnectingAirportsIcon from "@mui/icons-material/ConnectingAirports";
 import FlightIcon from "@mui/icons-material/Flight";
+import Person4Icon from "@mui/icons-material/Person4";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import { Link } from "react-router-dom";
-
 const SideMenuItem = ({
   name,
   link,
@@ -24,6 +24,7 @@ export enum AdminMenuLink {
   Flight = "flight",
   FlightRoute = "flightRoute",
   Invoice = "invoice",
+  User = "user",
 }
 const MenuItems = [
   {
@@ -52,6 +53,15 @@ const MenuItems = [
       </>
     ),
     link: AdminMenuLink.Invoice,
+  },
+  {
+    name: (
+      <>
+        <Person4Icon />
+        Người dùng
+      </>
+    ),
+    link: AdminMenuLink.User,
   },
 ];
 function SideMenu() {

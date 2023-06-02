@@ -6,15 +6,16 @@ import App from "./App";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import PageWrapper from "./components/Layout/PageWrapper";
 import { AdminMenuLink } from "./components/SideMenu";
+import DoanhThu from "./doanhthu";
 import "./index.css";
 import AdminPage from "./pages/Admin";
 import FilghtRoutePage from "./pages/AdminMenuPages/FilghtRoutePage";
 import FlightPage from "./pages/AdminMenuPages/FlightPage";
 import InvoicePage from "./pages/AdminMenuPages/InvoicePage";
 import MemberPage from "./pages/MemberPage";
+import UserOverView from "./views/AdminViews/UserOverView/UserOverView";
 import BookingView from "./views/BookingView";
 import LoginViews from "./views/LoginViews";
-import DoanhThu from "./doanhthu";
 
 const router = createBrowserRouter([
   {
@@ -59,6 +60,17 @@ const router = createBrowserRouter([
           //   </p>
           // </div>
           <DoanhThu />
+        ),
+      },
+      {
+        path: AdminMenuLink.User,
+        element: (
+          // <div className="flex h-full justify-center items-center cursor-pointer">
+          //   <p className="text-2xl bg-sky-500 text-white p-5 rounded-full">
+          //     Hãy chọn menu!
+          //   </p>
+          // </div>
+          <UserOverView />
         ),
       },
     ],
